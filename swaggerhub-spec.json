@@ -1,0 +1,334 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ConectaPetAPI",
+    "description": "API para o conectaPet",
+    "contact": {
+      "name": "Jonatan Goulart Maciel",
+      "email": "jonatan784@gmail.com"
+    },
+    "version": "0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/",
+      "description": "API de Desenvolvimento"
+    },
+    {
+      "url": "https://virtserver.swaggerhub.com/Cryover/ConectaPet/0.1",
+      "description": "API de producao"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Usuarios",
+      "description": "Chamadas de Usuarios"
+    },
+    {
+      "name": "Pets",
+      "description": "Chamadas de Pets"
+    },
+    {
+      "name": "Historico Veterinario",
+      "description": "Chamadas de Historico Veterinario"
+    },
+    {
+      "name": "Histórico Despesas",
+      "description": "Chamadas de Historico despesas"
+    }
+  ],
+  "paths": {
+    "/usuarios": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Busca todos Usuarios",
+        "description": "Rota responsavel pelo cadastro de novo usuario",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Usuario Criado"
+          },
+          "400": {
+            "description": "Usuario Ja existe"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Cadastro de Usuario",
+        "description": "Rota responsavel pelo cadastro de novo usuario",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Usuario Criado"
+          },
+          "400": {
+            "description": "Usuario Ja existe"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/pets": {
+      "post": {
+        "tags": ["Pets"],
+        "summary": "Cadastro de Pet",
+        "description": "Rota responsavel pelo cadastro de novo pet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Pet"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Pet Criado"
+          },
+          "400": {
+            "description": "Unauthorized"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/historico_veterinario": {
+      "post": {
+        "tags": ["Historico Veterinario"],
+        "summary": "Cadastro de Pet",
+        "description": "Rota responsavel pelo cadastro de novo pet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/historico_veterinario"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Unauthorized"
+          },
+          "400": {
+            "description": "Unauthorized"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/historico_despesas": {
+      "post": {
+        "tags": ["Histórico Despesas"],
+        "summary": "Cadastro de historico despesas",
+        "description": "Rota responsavel pelo cadastro de novo pet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/historico_despesas"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Unauthorized"
+          },
+          "400": {
+            "description": "Unauthorized"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto Usuario"
+      },
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo_pet": {
+            "type": "string"
+          },
+          "raca": {
+            "type": "string"
+          },
+          "sexo": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto Pet"
+      },
+      "historico_despesas": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "nomeItem": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "number"
+          }
+        },
+        "description": "Objeto Historico Despesa"
+      },
+      "historico_veterinario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "nome_veterinario": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "data_consulta": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto historico Veterinario"
+      }
+    }
+  }
+}

@@ -69,7 +69,7 @@ const getUsuarioById = async (req, res) => {
 };
 
 const createUsuario = async (req, res) => {
-  let { username, email, nome, senha } = req.body;
+  const { username, email, nome, senha } = req.body;
 
   if (!username) {
     return res.status(400).json({ error: "Username é obrigatório." });
@@ -83,22 +83,17 @@ const createUsuario = async (req, res) => {
 
     if (!rows) {
       const hashedPassword = await bcrypt.hash(req.body.senha, 10);
-      user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        senha: hashedPassword,
-      });
 
       const { savedUser } = await pool.query(
-        "INSERT INTO usuarios (username, email, nome, senha) VALUES ($1, $2, $3, $4) RETURNING *",
-        [username, email, nome, senha]
+        "INSERT INTO usuarios (id, username, email, nome, senha) VALUES ($1, $2, $3, $4) RETURNING *",
+        [crypto.randomUUID(), username, email, nome, hashedPassword]
       );
       res
         .status(201)
-        .json({ message: `Usuario ${savedUser} criado com sucesso` });
+        .json({ message: `Usuario ${username} criado com sucesso` });
     } else {
       console.error(error);
-      res.status(403).json("Usuário já existente");
+      res.status(409).json("Usuário já existente");
     }
 
     //const savedUser = await user.save();
