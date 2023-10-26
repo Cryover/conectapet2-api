@@ -1,49 +1,9 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { Pool } = require("pg");
-const pool = new Pool();
-
-const dotenv = require("dotenv");
-dotenv.config();
-
-const login = async (req, res) => {
-  const { username, password } = req.body;
-  const { users } = await pool.query("SELECT * FROM items WHERE id = $1", [id]);
-
-  const user = users.find((u) => u.username === username);
-
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ message: "Usuário ou Senha inválido" });
-  }
-
-  const token = jwt.sign(
-    { userId: user.id, username: user.username },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
-  res.json({ token });
-};
-
-// Middleware para verificar o token JWT
-const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization");
-
-  if (!token) {
-    return res.status(401).json({ message: "Token não fornecido" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: "Token inválido" });
-  }
-};
+const crypto = require("crypto");
 
 const getAllUsuarios = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM usuarios");
+    const { rows } = await req.dbClient.query("SELECT * FROM usuarios");
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -55,9 +15,10 @@ const getUsuarioById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const { rows } = await pool.query("SELECT * FROM items WHERE id = $1", [
-      id,
-    ]);
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM items WHERE id = $1",
+      [id]
+    );
     if (rows.length === 0) {
       return res.status(404).json({ error: "Usuario não encontrado." });
     }
@@ -74,19 +35,32 @@ const createUsuario = async (req, res) => {
   if (!username) {
     return res.status(400).json({ error: "Username é obrigatório." });
   }
+  if (!email) {
+    return res.status(400).json({ error: "Email é obrigatório." });
+  }
+  if (!nome) {
+    return res.status(400).json({ error: "Nome é obrigatória." });
+  }
   if (!senha) {
     return res.status(400).json({ error: "Senha é obrigatória." });
   }
 
   try {
-    const { rows } = await pool.query("SELECT * FROM usuarios");
+    const { rows } = await req.dbClient.query("SELECT * FROM usuarios");
 
-    if (!rows) {
+    if (!rows.length !== 0) {
       const hashedPassword = await bcrypt.hash(req.body.senha, 10);
 
-      const { savedUser } = await pool.query(
-        "INSERT INTO usuarios (id, username, email, nome, senha) VALUES ($1, $2, $3, $4) RETURNING *",
-        [crypto.randomUUID(), username, email, nome, hashedPassword]
+      const { savedUser } = await req.dbClient.query(
+        "INSERT INTO usuarios (id, username, email, nome, senha, tipo_usuario) VALUES ($1, $2, $3, $4, $5, $6)",
+        [
+          crypto.randomUUID(),
+          username,
+          email,
+          nome.toLowerCase(),
+          hashedPassword,
+          "padrao",
+        ]
       );
       res
         .status(201)
@@ -95,22 +69,8 @@ const createUsuario = async (req, res) => {
       console.error(error);
       res.status(409).json("Usuário já existente");
     }
-
-    //const savedUser = await user.save();
-    //res.json(savedUser);
   } catch (e) {
-    console.error(error);
-    res.status(500).json({ error: "Erro ao criar um usuario." });
-  }
-
-  try {
-    const { rows } = await pool.query(
-      "INSERT INTO usuarios (name) VALUES ($1) RETURNING *",
-      [user]
-    );
-    res.status(201).json(rows[0]);
-  } catch (error) {
-    console.error(error);
+    console.error(e);
     res.status(500).json({ error: "Erro ao criar um usuario." });
   }
 };
@@ -124,7 +84,7 @@ const updateUsuario = async (req, res) => {
   }
 
   try {
-    const { rows } = await pool.query(
+    const { rows } = await req.dbClient.query(
       "UPDATE usuarios SET name = $1 WHERE id = $2 RETURNING *",
       [name, id]
     );
@@ -142,7 +102,10 @@ const deleteUsuario = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await pool.query("DELETE FROM usuarios WHERE id = $1", [id]);
+    const result = await req.dbClient.query(
+      "DELETE FROM usuarios WHERE id = $1",
+      [id]
+    );
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "usuario não encontrado." });
     }
@@ -159,6 +122,4 @@ module.exports = {
   createUsuario,
   updateUsuario,
   deleteUsuario,
-  login,
-  verifyToken,
 };

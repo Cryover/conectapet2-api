@@ -1,9 +1,8 @@
-const { Pool } = require("pg");
-const pool = new Pool();
-
 const getAllHistoricoDespesas = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM historico_Despesa");
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM historico_Despesa"
+    );
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -19,7 +18,7 @@ const createHistoricoDespesa = async (req, res) => {
   }
 
   try {
-    const { rows } = await pool.query(
+    const { rows } = await req.dbClient.query(
       "INSERT INTO historico_Despesa (name) VALUES ($1) RETURNING *",
       [name]
     );
@@ -39,7 +38,7 @@ const updateHistoricoDespesa = async (req, res) => {
   }
 
   try {
-    const { rows } = await pool.query(
+    const { rows } = await req.dbClient.query(
       "UPDATE historico_Despesa SET name = $1 WHERE id = $2 RETURNING *",
       [name, id]
     );
@@ -57,7 +56,7 @@ const deleteHistoricoDespesa = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await pool.query(
+    const result = await req.dbClient.query(
       "DELETE FROM historico_Despesa WHERE id = $1",
       [id]
     );

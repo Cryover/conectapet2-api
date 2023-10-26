@@ -1,9 +1,6 @@
-const { Pool } = require("pg");
-const pool = new Pool();
-
 const getAllPets = async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM pets");
+    const { rows } = await req.dbClient.query("SELECT * FROM pets");
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -15,9 +12,10 @@ const getAllPetsByOwner = async (req, res) => {
   const id_dono = req.params.id;
 
   try {
-    const { rows } = await pool.query("SELECT * FROM pets WHERE id_dono = $1", [
-      id_dono,
-    ]);
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM pets WHERE id_dono = $1",
+      [id_dono]
+    );
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -29,7 +27,10 @@ const getPetById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const { rows } = await pool.query("SELECT * FROM pets WHERE id = $1", [id]);
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM pets WHERE id = $1",
+      [id]
+    );
     if (rows.length === 0) {
       return res.status(404).json({ error: "Item não encontrado." });
     }
@@ -60,12 +61,13 @@ const createPet = async (req, res) => {
   }
 
   try {
-    const { rows } = await pool.query("SELECT * FROM pets WHERE id_dono = $1", [
-      id_dono,
-    ]);
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM pets WHERE id_dono = $1",
+      [id_dono]
+    );
 
     if (!rows) {
-      const { savedPet } = await pool.query(
+      const { savedPet } = await req.dbClient.query(
         "INSERT INTO pets (id_dono) VALUES ($1, $2, $3, $4, $5) RETURNING *",
         [id_dono, nome, tipo_pet, raca, sexo]
       );
@@ -93,7 +95,7 @@ const updatePet = async (req, res) => {
   }
 
   try {
-    const { rows } = await pool.query(
+    const { rows } = await req.dbClient.query(
       "UPDATE pets SET name = $1 WHERE id = $2 RETURNING *",
       [name, id]
     );
@@ -111,7 +113,9 @@ const deletePet = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const result = await pool.query("DELETE FROM pets WHERE id = $1", [id]);
+    const result = await req.dbClient.query("DELETE FROM pets WHERE id = $1", [
+      id,
+    ]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "pet não encontrado." });
     }
