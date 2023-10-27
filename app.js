@@ -38,14 +38,10 @@ app.use("/usuarios", requireAuth, rotasUsuarios);
 app.use("/pets", requireAuth, rotasPets);
 app.use("/historicovet", requireAuth, rotasHistoricoVeterinario);
 app.use("/historicodespesas", requireAuth, rotasHistoricoDespesas);
-app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-    // Handle JSON syntax errors
-    res.status(400).json({ error: "Sintaxe de JSON invalido" });
-  } else {
-    res.status(404).json({ error: "Rota inexistente" });
-    next();
-  }
+app.all("*", (req, res) => {
+  res.status(404).json({
+    error: "ERRO 404 - Rota não encontrada ou inexistente",
+  });
 });
 
 app.listen(PORT, () => {

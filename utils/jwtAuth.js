@@ -1,22 +1,50 @@
 const jwt = require("jsonwebtoken");
 
 const requireAuth = (req, res, next) => {
-  const token = req.header("Authorization"); // Assuming the token is sent in the "Authorization" header
+  const authorizationHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ error: "Não autorizado, favor fazer Login" });
+  if (!authorizationHeader) {
+    return res.status(401).json({ error: "Autenticação necessária" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ error: "Token inválido ou expirado" });
-    }
+  const tokenParts = authorizationHeader.split(" ");
+  if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
+    return res.status(401).json({ error: "Formato do Token errado" });
+  }
 
-    // If the token is valid, you can access the user's information in `decoded`.
-    // You can also attach the user information to the request object for later use.
+  const token = tokenParts[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Token is valid
+    console.log(decoded);
     req.user = decoded;
     next();
-  });
+  } catch (error) {
+    // Token verification failed
+    if (
+      err.name === "JsonWebTokenError" &&
+      err.message === "invalid signature"
+    ) {
+      // Handle JWT signature error
+      res.status(401).json({ error: "Invalid token" });
+    } else {
+      // Handle other errors
+
+      if (
+        err.name === "JsonWebTokenError" &&
+        err.message === "invalid signature"
+      ) {
+        // Handle JWT signature error
+        return res.status(401).json({ error: "Invalid token" });
+      } else {
+        // Handle other errors
+        return res
+          .status(401)
+          .json({ error: "Acesso Negado ou Token expirado" });
+      }
+    }
+  }
 };
 
 module.exports = requireAuth;
