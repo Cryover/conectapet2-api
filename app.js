@@ -43,4 +43,5 @@ app.all("*", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor Express está ouvindo na porta ${PORT}`);
+  //console.log(`API URL: ${config.apiURL}`);
 });
