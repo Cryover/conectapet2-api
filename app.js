@@ -4,15 +4,14 @@ const dotenv = require("dotenv");
 const swaggerUi = require("swagger-ui-express");
 const bodyParser = require("body-parser");
 const swaggerJSDoc = require("swagger-jsdoc");
-const swaggerDefinition = require("./swaggerhub-spec.json"); // Replace with your file path
+const swaggerDefinition = require("./swaggerhub-spec.json");
 const requireAuth = require("./utils/jwtAuth");
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-const connectDatabase = require("./dataBase"); // Import the middleware
-
+const connectDatabase = require("./dataBase");
 const rotasLogin = require("./routes/rotasLogin");
 const rotasPets = require("./routes/rotasPets");
 const rotasUsuarios = require("./routes/rotasUsuarios");
@@ -26,11 +25,9 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-// Use the middlewares for all routes
 app.use(connectDatabase);
 app.use(bodyParser.json());
 
-// Serve Swagger documentation using Swagger UI
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/login", rotasLogin);
@@ -46,5 +43,4 @@ app.all("*", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor Express está ouvindo na porta ${PORT}`);
-  console.log(`Conectado ao Database  ${connectDatabase.name}`);
 });

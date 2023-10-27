@@ -17,7 +17,7 @@ const requireAuth = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     // Token is valid
-    console.log(decoded);
+    //console.log(decoded);
     req.user = decoded;
     next();
   } catch (error) {
