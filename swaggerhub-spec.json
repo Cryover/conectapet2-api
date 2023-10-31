@@ -7,16 +7,16 @@
       "name": "Jonatan Goulart Maciel",
       "email": "jonatan784@gmail.com"
     },
-    "version": "0.1"
+    "version": "0.3"
   },
   "servers": [
     {
       "url": "http://localhost:3000/",
-      "description": "API de Desenvolvimento"
+      "description": "Servidor API de Desenvolvimento"
     },
     {
-      "url": "https://virtserver.swaggerhub.com/Cryover/ConectaPet/0.1",
-      "description": "API de producao"
+      "url": "https://virtserver.swaggerhub.com/Cryover/ConectaPet/0.3",
+      "description": "Servidor API de producao"
     }
   ],
   "tags": [
@@ -40,9 +40,112 @@
   "paths": {
     "/usuarios": {
       "get": {
-        "tags": ["Usuarios"],
-        "summary": "Busca todos Usuarios",
-        "description": "Rota responsavel pelo cadastro de novo usuario",
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Busca todos usuarios.",
+        "description": "Busca de todos usuarios do sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "admin"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Adiciona novo usuario.",
+        "description": "Adiciona novo usuario ao sistema sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Usuario criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro 400 - Campo é obrigatório."
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "404": {
+            "description": "Erro 404 - Usuário não encontrado."
+          },
+          "409": {
+            "description": "Erro 409 - Usuário já existente."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        }
+      }
+    },
+    "/usuarios/{id}": {
+      "summary": "Represents a user",
+      "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Busca usuario por ID",
+        "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
+        "operationId": "getUsuarioById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -53,40 +156,30 @@
                 }
               }
             }
-          },
-          "201": {
-            "description": "Usuario Criado"
-          },
-          "400": {
-            "description": "Usuario Ja existe"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Unauthorized"
           }
         }
       },
-      "post": {
-        "tags": ["Usuarios"],
-        "summary": "Cadastro de Usuario",
-        "description": "Rota responsavel pelo cadastro de novo usuario",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Usuario"
-              }
+      "put": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Atualiza todos campos de usuario.",
+        "description": "Atualiza todos campos de usuario.\n",
+        "operationId": "updateUsuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -97,141 +190,746 @@
                 }
               }
             }
-          },
-          "201": {
-            "description": "Usuario Criado"
-          },
-          "400": {
-            "description": "Usuario Ja existe"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Unauthorized"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Deleta usuario.",
+        "description": "Deleta usuario.\n",
+        "operationId": "deleteUsuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Atualiza apenas alguns campos.",
+        "description": "Atualiza apenas alguns campos ao inves de todos.\n",
+        "operationId": "patchUsuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
           }
         }
       }
     },
     "/pets": {
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Busca todos pets.",
+        "description": "Busca de todos pets do sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "admin"
+            ]
+          }
+        ]
+      },
       "post": {
-        "tags": ["Pets"],
-        "summary": "Cadastro de Pet",
-        "description": "Rota responsavel pelo cadastro de novo pet",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Pet"
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Adiciona novo usuario.",
+        "description": "Adiciona novo usuario ao sistema sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Usuario criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro 400 - Campo é obrigatório."
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "404": {
+            "description": "Erro 404 - Pet não encontrado."
+          },
+          "409": {
+            "description": "Erro 409 - Pet já existente."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        }
+      }
+    },
+    "/pets/{id}": {
+      "summary": "Representa um pet",
+      "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
+      "get": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Busca usuario por ID",
+        "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
+        "operationId": "getPetById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
               }
             }
           }
-        },
+        }
+      },
+      "put": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Atualiza todos campos de usuario.",
+        "description": "Atualiza todos campos de usuario.\n",
+        "operationId": "updatePet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Pet Criado"
-          },
-          "400": {
-            "description": "Unauthorized"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Unauthorized"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Deleta usuario.",
+        "description": "Deleta usuario.\n",
+        "operationId": "deletePet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Pets"
+        ],
+        "summary": "Atualiza apenas alguns campos.",
+        "description": "Atualiza apenas alguns campos ao inves de todos.\n",
+        "operationId": "patchPet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Pet ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
           }
         }
       }
     },
     "/historico_veterinario": {
+      "get": {
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Busca todos pets.",
+        "description": "Busca de todos pets do sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "admin"
+            ]
+          }
+        ]
+      },
       "post": {
-        "tags": ["Historico Veterinario"],
-        "summary": "Cadastro de Pet",
-        "description": "Rota responsavel pelo cadastro de novo pet",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/historico_veterinario"
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Adiciona novo usuario.",
+        "description": "Adiciona novo usuario ao sistema sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Usuario criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro 400 - Campo é obrigatório."
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "404": {
+            "description": "Erro 404 - Pet não encontrado."
+          },
+          "409": {
+            "description": "Erro 409 - Pet já existente."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        }
+      }
+    },
+    "/historico_veterinario/{id}": {
+      "summary": "Representa um pet",
+      "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
+      "get": {
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Busca usuario por ID",
+        "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
+        "operationId": "getHistoricoVeterinariosByIdPet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Historico Veterinarios ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
               }
             }
           }
-        },
+        }
+      },
+      "put": {
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Atualiza todos campos de usuario.",
+        "description": "Atualiza todos campos de usuario.\n",
+        "operationId": "updateHistoricoVeterinario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Unauthorized"
-          },
-          "400": {
-            "description": "Unauthorized"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Unauthorized"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Deleta Historico Veterinario.",
+        "description": "Deleta usuario.\n",
+        "operationId": "deleteHistoricoVeterinario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Historico Veterinario"
+        ],
+        "summary": "Atualiza apenas alguns campos.",
+        "description": "Atualiza apenas alguns campos ao inves de todos.\n",
+        "operationId": "pacthHistoricoVeterinario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Pet ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
           }
         }
       }
     },
     "/historico_despesas": {
+      "get": {
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Busca todos Histórico Despesas.",
+        "description": "Busca de todos pets do sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "admin"
+            ]
+          }
+        ]
+      },
       "post": {
-        "tags": ["Histórico Despesas"],
-        "summary": "Cadastro de historico despesas",
-        "description": "Rota responsavel pelo cadastro de novo pet",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/historico_despesas"
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Adiciona novo Histórico Despesas.",
+        "description": "Adiciona novo usuario ao sistema sistema.\n",
+        "responses": {
+          "200": {
+            "description": "Operação bem-sucedida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Historico de despesa criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro 400 - Campo é obrigatório."
+          },
+          "401": {
+            "description": "Erro 401 - Não autenticado."
+          },
+          "403": {
+            "description": "Erro 403 - Token de acesso não autorizado ou expirado."
+          },
+          "404": {
+            "description": "Erro 404 - Historico de despesa não encontrado."
+          },
+          "409": {
+            "description": "Erro 409 - Historico de despesa já existente."
+          },
+          "500": {
+            "description": "Erro 500 - Operação não tratada."
+          }
+        }
+      }
+    },
+    "/historico_despesas/{id}": {
+      "summary": "Representa um pet",
+      "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
+      "get": {
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Busca usuario por ID",
+        "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
+        "operationId": "getHistoricoDespesasByIdPet",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Historico Despesas ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_veterinario"
+                }
               }
             }
           }
-        },
+        }
+      },
+      "put": {
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Atualiza todos campos de Historico de despesa.",
+        "description": "Atualiza todos campos de usuario.\n",
+        "operationId": "updateHistoricoDespesa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
-          },
-          "201": {
-            "description": "Unauthorized"
-          },
-          "400": {
-            "description": "Unauthorized"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Unauthorized"
-          },
-          "409": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Unauthorized"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_despesas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Deleta Historico de despesa.",
+        "description": "Deleta usuario.\n",
+        "operationId": "deleteHistoricoDespesa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_despesas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Histórico Despesas"
+        ],
+        "summary": "Atualiza apenas alguns campos de Historico de despesa.",
+        "description": "Atualiza apenas alguns campos ao inves de todos.\n",
+        "operationId": "patchHistoricoDespesa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Pet ID",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Historico_despesas"
+                }
+              }
+            }
           }
         }
       }
@@ -243,6 +941,9 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "criado_em": {
             "type": "string"
           },
           "username": {
@@ -269,6 +970,9 @@
           "id_dono": {
             "type": "string"
           },
+          "criado_em": {
+            "type": "string"
+          },
           "nome": {
             "type": "string"
           },
@@ -284,7 +988,7 @@
         },
         "description": "Objeto Pet"
       },
-      "historico_despesas": {
+      "Historico_despesas": {
         "type": "object",
         "properties": {
           "id": {
@@ -296,6 +1000,9 @@
           "id_pet": {
             "type": "string"
           },
+          "criado_em": {
+            "type": "string"
+          },
           "nomeItem": {
             "type": "string"
           },
@@ -305,13 +1012,16 @@
         },
         "description": "Objeto Historico Despesa"
       },
-      "historico_veterinario": {
+      "Historico_veterinario": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
           "id_pet": {
+            "type": "string"
+          },
+          "criado_em": {
             "type": "string"
           },
           "nome_veterinario": {
@@ -328,6 +1038,176 @@
           }
         },
         "description": "Objeto historico Veterinario"
+      },
+      "Agendamento": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          },
+          "criado_em": {
+            "type": "string"
+          },
+          "data_inicio": {
+            "type": "string"
+          },
+          "data_fim": {
+            "type": "string"
+          },
+          "descricao": {
+            "type": "string"
+          },
+          "data_consulta": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto historico Veterinario"
+      },
+      "Consulta": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "criado_em": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo_pet": {
+            "type": "string"
+          },
+          "raca": {
+            "type": "string"
+          },
+          "sexo": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto Pet"
+      },
+      "Compromisso": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_dono": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "criado_em": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "tipo_pet": {
+            "type": "string"
+          },
+          "raca": {
+            "type": "string"
+          },
+          "sexo": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto Pet"
+      },
+      "Error": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "Ok": {
+        "description": "A operação foi concluída com êxito.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "O recurso especificado não foi encontrado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Não autorizado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "name": "X-API-Key",
+        "in": "header"
+      },
+      "OpenID": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://example.com/.well-known/openid-configuration"
+      },
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "tokenUrl": "https://example.com/oauth/token",
+            "scopes": {
+              "read": "Grants read access",
+              "write": "Grants write access",
+              "admin": "Grants access to admin operations"
+            }
+          }
+        }
       }
     }
   }
