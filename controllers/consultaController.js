@@ -1,7 +1,7 @@
-const getAllHistoricoVeterinarios = async (req, res) => {
+const getAllConsulta = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM historico_veterinario"
+      "SELECT * FROM consulta"
     );
 
     if (rows.length === 0) {
@@ -20,7 +20,7 @@ const getAllHistoricoVeterinarios = async (req, res) => {
   }
 };
 
-const getHistoricoVeterinariosByIdPet = async (req, res) => {
+const getConsultaByIdPet = async (req, res) => {
   const id_pet = req.params.id;
 
   if (!id_pet) {
@@ -29,7 +29,7 @@ const getHistoricoVeterinariosByIdPet = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM historico_veterinario WHERE id_pet = $1",
+      "SELECT * FROM consulta WHERE id_pet = $1",
       [id_pet]
     );
     if (rows.length === 0) {
@@ -46,7 +46,7 @@ const getHistoricoVeterinariosByIdPet = async (req, res) => {
   }
 };
 
-const createHistoricoVeterinario = async (req, res) => {
+const createConsulta = async (req, res) => {
   const { name } = req.body;
 
   if (!name) {
@@ -55,7 +55,7 @@ const createHistoricoVeterinario = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "INSERT INTO historico_veterinario (name) VALUES ($1) RETURNING *",
+      "INSERT INTO consulta (name) VALUES ($1) RETURNING *",
       [name]
     );
     res.status(201).json(rows[0]);
@@ -65,7 +65,7 @@ const createHistoricoVeterinario = async (req, res) => {
   }
 };
 
-const updateHistoricoVeterinario = async (req, res) => {
+const updateConsulta = async (req, res) => {
   const id = req.params.id;
   const { name } = req.body;
 
@@ -75,51 +75,51 @@ const updateHistoricoVeterinario = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "UPDATE historico_veterinario SET name = $1 WHERE id = $2 RETURNING *",
+      "UPDATE consulta SET name = $1 WHERE id = $2 RETURNING *",
       [name, id]
     );
     if (rows.length === 0) {
       return res
         .status(404)
-        .json({ error: "Histórico veterinário não encontrado." });
+        .json({ error: "Consulta não encontrada." });
     } else {
       res
         .status(200)
-        .json({ message: "Histórico veterinário atualizado com sucesso." });
+        .json({ message: "Consulta atualizada com sucesso." });
     }
     res.json(rows[0]);
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .json({ error: "Erro ao atualizar o Histórico veterinário." });
+      .json({ error: "Erro ao atualizar Consulta." });
   }
 };
 
-const deleteHistoricoVeterinario = async (req, res) => {
+const deleteConsulta = async (req, res) => {
   const id = req.params.id;
 
   try {
     const result = await req.dbClient.query(
-      "DELETE FROM historico_veterinario WHERE id = $1",
+      "DELETE FROM consulta WHERE id = $1",
       [id]
     );
     if (result.rowCount === 0) {
       return res
         .status(404)
-        .json({ error: "Histórico veterinário não encontrado." });
+        .json({ error: "Consulta não encontrada." });
     }
-    res.json({ message: "Histórico veterinário excluído com sucesso." });
+    res.json({ message: "Consulta excluída com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao excluir o Histórico veterinário." });
+    res.status(500).json({ error: "Erro ao excluir Consulta." });
   }
 };
 
 module.exports = {
-  getAllHistoricoVeterinarios,
-  getHistoricoVeterinariosByIdPet,
-  createHistoricoVeterinario,
-  updateHistoricoVeterinario,
-  deleteHistoricoVeterinario,
+  getAllConsulta,
+  getConsultaByIdPet,
+  createConsulta,
+  updateConsulta,
+  deleteConsulta,
 };

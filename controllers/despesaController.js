@@ -1,7 +1,7 @@
-const getAllHistoricoDespesas = async (req, res) => {
+const getAllDespesa = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM historico_Despesa"
+      "SELECT * FROM despesa"
     );
     res.json(rows);
   } catch (error) {
@@ -10,7 +10,7 @@ const getAllHistoricoDespesas = async (req, res) => {
   }
 };
 
-const getHistoricoDespesasByIdPet = async (req, res) => {
+const getDespesaByIdPet = async (req, res) => {
   const id_pet = req.params.id;
 
   if (!id_pet) {
@@ -19,7 +19,7 @@ const getHistoricoDespesasByIdPet = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM historico_despesas WHERE id_pet = $1",
+      "SELECT * FROM despesas WHERE id_pet = $1",
       [id_pet]
     );
     if (rows.length === 0) {
@@ -36,7 +36,7 @@ const getHistoricoDespesasByIdPet = async (req, res) => {
   }
 };
 
-const createHistoricoDespesa = async (req, res) => {
+const createDespesa = async (req, res) => {
   const { name } = req.body;
 
   if (!name) {
@@ -45,7 +45,7 @@ const createHistoricoDespesa = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "INSERT INTO historico_Despesa (name) VALUES ($1) RETURNING *",
+      "INSERT INTO despesa (name) VALUES ($1) RETURNING *",
       [name]
     );
     res.status(201).json(rows[0]);
@@ -55,7 +55,7 @@ const createHistoricoDespesa = async (req, res) => {
   }
 };
 
-const updateHistoricoDespesa = async (req, res) => {
+const updateDespesa = async (req, res) => {
   const id = req.params.id;
   const { name } = req.body;
 
@@ -65,7 +65,7 @@ const updateHistoricoDespesa = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "UPDATE historico_Despesa SET name = $1 WHERE id = $2 RETURNING *",
+      "UPDATE despesa SET name = $1 WHERE id = $2 RETURNING *",
       [name, id]
     );
     if (rows.length === 0) {
@@ -78,12 +78,12 @@ const updateHistoricoDespesa = async (req, res) => {
   }
 };
 
-const deleteHistoricoDespesa = async (req, res) => {
+const deleteDespesa = async (req, res) => {
   const id = req.params.id;
 
   try {
     const result = await req.dbClient.query(
-      "DELETE FROM historico_Despesa WHERE id = $1",
+      "DELETE FROM despesa WHERE id = $1",
       [id]
     );
     if (result.rowCount === 0) {
@@ -97,9 +97,9 @@ const deleteHistoricoDespesa = async (req, res) => {
 };
 
 module.exports = {
-  getAllHistoricoDespesas,
-  getHistoricoDespesasByIdPet,
-  createHistoricoDespesa,
-  updateHistoricoDespesa,
-  deleteHistoricoDespesa,
+  getAllDespesa,
+  getDespesaByIdPet,
+  createDespesa,
+  updateDespesa,
+  deleteDespesa,
 };

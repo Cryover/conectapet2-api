@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const moment = require('moment');
 
 const getAllUsuarios = async (req, res) => {
   try {
@@ -32,6 +33,9 @@ const getUsuarioById = async (req, res) => {
 
 const createUsuario = async (req, res) => {
   const { username, email, nome, senha } = req.body;
+  const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
+
+  console.log(currentDateTime)
 
   if (!username) {
     return res.status(400).json({ error: "Username é obrigatório." });
@@ -51,9 +55,10 @@ const createUsuario = async (req, res) => {
 
     if (!rows.length !== 0) {
       const hashedPassword = await bcrypt.hash(req.body.senha, 10);
+      
 
       const { savedUser } = await req.dbClient.query(
-        "INSERT INTO usuarios (id, username, email, nome, senha, tipo_usuario) VALUES ($1, $2, $3, $4, $5, $6)",
+        "INSERT INTO usuarios (id, username, email, nome, senha, tipo_usuario, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
         [
           crypto.randomUUID(),
           username,
@@ -61,6 +66,7 @@ const createUsuario = async (req, res) => {
           nome.toLowerCase(),
           hashedPassword,
           "padrao",
+          currentDateTime
         ]
       );
       res

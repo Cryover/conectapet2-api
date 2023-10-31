@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/",
+      "url": "http://localhost:3000",
       "description": "Servidor API de Desenvolvimento"
     },
     {
@@ -29,15 +29,16 @@
       "description": "Chamadas de Pets"
     },
     {
-      "name": "Historico Veterinario",
-      "description": "Chamadas de Historico Veterinario"
+      "name": "Consulta",
+      "description": "Chamadas de consulta"
     },
     {
-      "name": "Histórico Despesas",
-      "description": "Chamadas de Historico despesas"
+      "name": "Despesa",
+      "description": "Chamadas de despesa"
     }
   ],
   "paths": {
+    
     "/usuarios": {
       "get": {
         "tags": [
@@ -300,9 +301,9 @@
       },
       "post": {
         "tags": [
-          "Usuarios"
+          "Pets"
         ],
-        "summary": "Adiciona novo usuario.",
+        "summary": "Adiciona novo pet.",
         "description": "Adiciona novo usuario ao sistema sistema.\n",
         "responses": {
           "200": {
@@ -348,13 +349,13 @@
     },
     "/pets/{id}": {
       "summary": "Representa um pet",
-      "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
+      "description": "Chamadas utilizando pet_ID.\n",
       "get": {
         "tags": [
           "Pets"
         ],
-        "summary": "Busca usuario por ID",
-        "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
+        "summary": "Busca pet por ID",
+        "description": "Busca pet por ID\n",
         "operationId": "getPetById",
         "parameters": [
           {
@@ -486,10 +487,10 @@
         }
       }
     },
-    "/historico_veterinario": {
+    "/consulta": {
       "get": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
         "summary": "Busca todos pets.",
         "description": "Busca de todos pets do sistema.\n",
@@ -499,7 +500,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -524,7 +525,7 @@
       },
       "post": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
         "summary": "Adiciona novo usuario.",
         "description": "Adiciona novo usuario ao sistema sistema.\n",
@@ -534,7 +535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -544,7 +545,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -570,21 +571,21 @@
         }
       }
     },
-    "/historico_veterinario/{id}": {
+    "/consulta/{id}": {
       "summary": "Representa um pet",
       "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
       "get": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
         "summary": "Busca usuario por ID",
         "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
-        "operationId": "getHistoricoVeterinariosByIdPet",
+        "operationId": "getConsultaByIdPet",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "Historico Veterinarios ID",
+            "description": "Consulta ID",
             "required": true,
             "style": "simple",
             "explode": false,
@@ -600,7 +601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -609,11 +610,11 @@
       },
       "put": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
         "summary": "Atualiza todos campos de usuario.",
         "description": "Atualiza todos campos de usuario.\n",
-        "operationId": "updateHistoricoVeterinario",
+        "operationId": "updateConsulta",
         "parameters": [
           {
             "name": "id",
@@ -634,7 +635,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -643,11 +644,11 @@
       },
       "delete": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
-        "summary": "Deleta Historico Veterinario.",
-        "description": "Deleta usuario.\n",
-        "operationId": "deleteHistoricoVeterinario",
+        "summary": "Deleta Consulta.",
+        "description": "Deleta consulta.\n",
+        "operationId": "deleteConsulta",
         "parameters": [
           {
             "name": "id",
@@ -668,7 +669,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -677,11 +678,11 @@
       },
       "patch": {
         "tags": [
-          "Historico Veterinario"
+          "Consulta"
         ],
         "summary": "Atualiza apenas alguns campos.",
         "description": "Atualiza apenas alguns campos ao inves de todos.\n",
-        "operationId": "pacthHistoricoVeterinario",
+        "operationId": "patchConsulta",
         "parameters": [
           {
             "name": "id",
@@ -702,7 +703,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Consulta"
                 }
               }
             }
@@ -710,12 +711,12 @@
         }
       }
     },
-    "/historico_despesas": {
+    "/despesa": {
       "get": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
-        "summary": "Busca todos Histórico Despesas.",
+        "summary": "Busca todas Despesa.",
         "description": "Busca de todos pets do sistema.\n",
         "responses": {
           "200": {
@@ -723,7 +724,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -748,9 +749,9 @@
       },
       "post": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
-        "summary": "Adiciona novo Histórico Despesas.",
+        "summary": "Adiciona novo Despesa.",
         "description": "Adiciona novo usuario ao sistema sistema.\n",
         "responses": {
           "200": {
@@ -758,7 +759,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -768,7 +769,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -794,16 +795,16 @@
         }
       }
     },
-    "/historico_despesas/{id}": {
+    "/despesa/{id}": {
       "summary": "Representa um pet",
       "description": "This resource represents an individual user in the system. Each user is identified by a numeric `id`.\n",
       "get": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
         "summary": "Busca usuario por ID",
         "description": "A detailed description of the operation. Use markdown for rich text representation, such as **bold**, *italic*, and [links](https://swagger.io).\n",
-        "operationId": "getHistoricoDespesasByIdPet",
+        "operationId": "getDespesasByIdPet",
         "parameters": [
           {
             "name": "id",
@@ -824,7 +825,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -833,11 +834,11 @@
       },
       "put": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
         "summary": "Atualiza todos campos de Historico de despesa.",
         "description": "Atualiza todos campos de usuario.\n",
-        "operationId": "updateHistoricoDespesa",
+        "operationId": "updateDespesa",
         "parameters": [
           {
             "name": "id",
@@ -858,7 +859,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -867,11 +868,11 @@
       },
       "delete": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
-        "summary": "Deleta Historico de despesa.",
-        "description": "Deleta usuario.\n",
-        "operationId": "deleteHistoricoDespesa",
+        "summary": "Deleta Despesa.",
+        "description": "Deleta Despsa.\n",
+        "operationId": "deleteDespesa",
         "parameters": [
           {
             "name": "id",
@@ -892,7 +893,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
@@ -901,11 +902,11 @@
       },
       "patch": {
         "tags": [
-          "Histórico Despesas"
+          "Despesa"
         ],
         "summary": "Atualiza apenas alguns campos de Historico de despesa.",
         "description": "Atualiza apenas alguns campos ao inves de todos.\n",
-        "operationId": "patchHistoricoDespesa",
+        "operationId": "patchDespesa",
         "parameters": [
           {
             "name": "id",
@@ -926,11 +927,87 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_despesas"
+                  "$ref": "#/components/schemas/Despesa"
                 }
               }
             }
           }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "requestBody",
+            "description": "Login",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Login"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/login/register": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "description": "teste",
+        "operationId": "login",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "username",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "senha",
+            "in": "path",
+            "description": "Senha",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          } 
         }
       }
     }
@@ -940,12 +1017,6 @@
       "Usuario": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "criado_em": {
-            "type": "string"
-          },
           "username": {
             "type": "string"
           },
@@ -988,57 +1059,6 @@
         },
         "description": "Objeto Pet"
       },
-      "Historico_despesas": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "id_dono": {
-            "type": "string"
-          },
-          "id_pet": {
-            "type": "string"
-          },
-          "criado_em": {
-            "type": "string"
-          },
-          "nomeItem": {
-            "type": "string"
-          },
-          "valor": {
-            "type": "number"
-          }
-        },
-        "description": "Objeto Historico Despesa"
-      },
-      "Historico_veterinario": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "id_pet": {
-            "type": "string"
-          },
-          "criado_em": {
-            "type": "string"
-          },
-          "nome_veterinario": {
-            "type": "string"
-          },
-          "descricao": {
-            "type": "string"
-          },
-          "data_consulta": {
-            "type": "string"
-          },
-          "id_dono": {
-            "type": "string"
-          }
-        },
-        "description": "Objeto historico Veterinario"
-      },
       "Agendamento": {
         "type": "object",
         "properties": {
@@ -1067,7 +1087,7 @@
             "type": "string"
           }
         },
-        "description": "Objeto historico Veterinario"
+        "description": "Objeto Consulta"
       },
       "Consulta": {
         "type": "object",
@@ -1114,6 +1134,24 @@
           "criado_em": {
             "type": "string"
           },
+          "descricao": {
+            "type": "string"
+          }
+        },
+        "description": "Objeto Pet"
+      },
+      "Despesa": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "id_pet": {
+            "type": "string"
+          },
+          "criado_em": {
+            "type": "string"
+          },
           "nome": {
             "type": "string"
           },
@@ -1127,7 +1165,19 @@
             "type": "string"
           }
         },
-        "description": "Objeto Pet"
+        "description": "Despesa"
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "senha": {
+            "type": "string"
+          }
+        },
+        "description": "Despesa"
       },
       "Error": {
         "required": [
