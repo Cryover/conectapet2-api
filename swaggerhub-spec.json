@@ -723,7 +723,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Historico_despesas"
                 }
               }
             }
@@ -758,7 +758,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Historico_despesas"
                 }
               }
             }
@@ -768,7 +768,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Historico_despesas"
                 }
               }
             }
@@ -824,7 +824,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Historico_veterinario"
+                  "$ref": "#/components/schemas/Historico_despesas"
                 }
               }
             }
