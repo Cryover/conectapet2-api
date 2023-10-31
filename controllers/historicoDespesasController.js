@@ -10,6 +10,32 @@ const getAllHistoricoDespesas = async (req, res) => {
   }
 };
 
+const getHistoricoDespesasByIdPet = async (req, res) => {
+  const id_pet = req.params.id;
+
+  if (!id_pet) {
+    return res.status(400).json({ error: "Id_pet é obrigatório." });
+  }
+
+  try {
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM historico_despesas WHERE id_pet = $1",
+      [id_pet]
+    );
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Histórico despesa não encontrado." });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Erro ao buscar o Histórico despesa por id_pet." });
+  }
+};
+
 const createHistoricoDespesa = async (req, res) => {
   const { name } = req.body;
 
@@ -72,6 +98,7 @@ const deleteHistoricoDespesa = async (req, res) => {
 
 module.exports = {
   getAllHistoricoDespesas,
+  getHistoricoDespesasByIdPet,
   createHistoricoDespesa,
   updateHistoricoDespesa,
   deleteHistoricoDespesa,

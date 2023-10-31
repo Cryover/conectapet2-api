@@ -5,6 +5,7 @@ const getAllUsuarios = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query("SELECT * FROM usuarios");
     res.json(rows);
+    res.status(200).json({ error: "Operação bem-sucedida." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao buscar itens." });
