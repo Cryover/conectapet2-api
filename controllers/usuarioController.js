@@ -33,27 +33,21 @@ const getUsuarioById = async (req, res) => {
 
 const createUsuario = async (req, res) => {
   const { username, email, nome, senha } = req.body;
+  const requiredFields = ['username', 'email', 'nome', 'senha'];
   const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
 
   console.log(currentDateTime)
 
-  if (!username) {
-    return res.status(400).json({ error: "Username é obrigatório." });
-  }
-  if (!email) {
-    return res.status(400).json({ error: "Email é obrigatório." });
-  }
-  if (!nome) {
-    return res.status(400).json({ error: "Nome é obrigatória." });
-  }
-  if (!senha) {
-    return res.status(400).json({ error: "Senha é obrigatória." });
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return res.status(400).json({ error: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
+    }
   }
 
   try {
-    const { rows } = await req.dbClient.query("SELECT * FROM usuarios");
+    const { rows } = await req.dbClient.query("SELECT * FROM usuarios WHERE username = $1 OR email = $2",[username, email]);
 
-    if (!rows.length !== 0) {
+    if (rows.length === 0) {
       const hashedPassword = await bcrypt.hash(req.body.senha, 10);
       
 
@@ -71,10 +65,10 @@ const createUsuario = async (req, res) => {
       );
       res
         .status(201)
-        .json({ message: `Usuario ${username} criado com sucesso` });
+        .json({ error: `ERRO 201 - Usuario ${username} criado com sucesso` });
     } else {
-      console.error(error);
-      res.status(409).json("Usuário já existente");
+      //console.error(error);
+      res.status(409).json("Usuário já cadastrado com esse email");
     }
   } catch (e) {
     console.error(e);

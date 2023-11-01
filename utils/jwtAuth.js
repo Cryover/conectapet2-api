@@ -20,7 +20,7 @@ const requireAuth = (req, res, next) => {
     //console.log(decoded);
     req.user = decoded;
     next();
-  } catch (error) {
+  } catch (err) {
     // Token verification failed
     if (
       err.name === "JsonWebTokenError" &&

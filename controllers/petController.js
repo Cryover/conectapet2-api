@@ -1,3 +1,6 @@
+const crypto = require("crypto");
+const moment = require('moment');
+
 const getAllPets = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query("SELECT * FROM pets");
@@ -9,7 +12,7 @@ const getAllPets = async (req, res) => {
 };
 
 const getAllPetsByOwner = async (req, res) => {
-  const id_dono = req.params.id;
+  const id_dono = req.params.ownerId;
 
   try {
     const { rows } = await req.dbClient.query(
@@ -18,7 +21,7 @@ const getAllPetsByOwner = async (req, res) => {
     );
     res.json(rows);
   } catch (error) {
-    console.error(error);
+    //console.error(error);
     res.status(500).json({ error: "Erro ao buscar pets por dono." });
   }
 };
@@ -43,46 +46,40 @@ const getPetById = async (req, res) => {
 
 const createPet = async (req, res) => {
   const { id_dono, nome, tipo_pet, raca, sexo } = req.body;
+  const requiredFields = ['id_dono', 'nome', 'tipo_pet', 'raca', 'sexo'];
+  const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
 
-  if (!id_dono) {
-    return res.status(400).json({ error: "id de dono é obrigatório." });
-  }
-  if (!nome) {
-    return res.status(400).json({ error: "Nome de pet é obrigatório." });
-  }
-  if (!tipo_pet) {
-    return res.status(400).json({ error: "Tipo de pet é obrigatório." });
-  }
-  if (!raca) {
-    return res.status(400).json({ error: "Raça de pet é obrigatório." });
-  }
-  if (!sexo) {
-    return res.status(400).json({ error: "Sexo de pet é obrigatório." });
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return res.status(400).json({ error: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
+    }
   }
 
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM pets WHERE id_dono = $1",
-      [id_dono]
+      "SELECT * FROM pets WHERE id_dono = $1 AND nome = $2",
+      [id_dono, nome]
     );
 
-    if (!rows) {
+    console.log(rows)
+
+    if (rows.length === 0) {
+
       const { savedPet } = await req.dbClient.query(
-        "INSERT INTO pets (id_dono) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [id_dono, nome, tipo_pet, raca, sexo]
+        "INSERT INTO pets (id_dono, id, nome, tipo_pet, raca, sexo, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        [id_dono, crypto.randomUUID(), nome, tipo_pet, raca, sexo, currentDateTime]
       );
-      console.log(savedPet[0]);
       res
         .status(201)
-        .json({ message: "Pet adicionado e vinculado a dono com sucesso." });
+        .json({ message: "Pet adicionado e vinculado com sucesso." });
     } else {
       res
         .status(409)
-        .json({ message: "Pet adicionado e vinculado a dono com sucesso." });
+        .json({ error: "ERRO 409 - Pet ja vinculado a um dono!" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao adicionar pet." });
+    res.status(500).json({ error: "ERRO 500 - Erro ao adicionar pet." });
   }
 };
 
