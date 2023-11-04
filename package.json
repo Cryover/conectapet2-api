@@ -6,8 +6,8 @@
   "scripts": {
     "start": "nodemon ./app.js localhost 3000",
     "build": "set NODE_ENV=production && node app.js",
-    "start:development": "NODE_ENV=development node -r dotenv/config app.js",
-    "start:production": "NODE_ENV=production && npm install && node -r dotenv/config app.js",
+    "start:development": "NODE_ENV=development node -r app.js",
+    "start:production": "NODE_ENV=production && npm install && node -r app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jonatan Goulart Maciel",
