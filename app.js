@@ -23,18 +23,18 @@ const rotasDespesa = require("./routes/rotasDespesa");
 app.use(connectDatabase);
 app.use(bodyParser.json());
 
-app.use("/login", rotasLogin);
-app.use("/usuarios", requireAuth, rotasUsuarios);
-app.use("/pets", requireAuth, rotasPets);
-app.use("/consulta", requireAuth, rotasConsulta);
-app.use("/despesa", requireAuth, rotasDespesa);
+app.use("/api/v1/login", rotasLogin);
+app.use("/api/v1/usuarios", requireAuth, rotasUsuarios);
+app.use("/api/v1/pets", requireAuth, rotasPets);
+app.use("/api/v1/consulta", requireAuth, rotasConsulta);
+app.use("/api/v1/despesa", requireAuth, rotasDespesa);
 
 // Set up Swagger documentation
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = swaggerJsdoc(options);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.all("*", (req, res) => {
   res.status(404).json({
     error: "ERRO 404 - Rota não encontrada ou inexistente",
