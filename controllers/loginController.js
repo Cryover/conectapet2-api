@@ -15,10 +15,11 @@ const login = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT id, username, senha FROM usuarios WHERE username = $1",
+      "SELECT * FROM usuarios WHERE username = $1 OR email = $1",
       [username]
     );
     const user = rows[0];
+    console.log(rows[0]);
     if (rows.length === 0) {
       return res.status(404).json({ error: "Usuario não existe." });
     } else {
