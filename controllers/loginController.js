@@ -18,6 +18,7 @@ const login = async (req, res) => {
       "SELECT * FROM usuarios WHERE username = $1 OR email = $1",
       [username]
     );
+
     const user = rows[0];
     console.log(rows[0]);
     if (rows.length === 0) {
@@ -30,7 +31,13 @@ const login = async (req, res) => {
           process.env.JWT_SECRET,
           { expiresIn: "1h" }
         );
-        res.json({ token });
+
+        const response = {
+          userToken: token,
+          usuario: rows[0]
+        };
+
+        res.json(response);
       } else {
         // Authentication failed
         return res.status(401).json({ error: "Usuário ou Senha inválidos" });
