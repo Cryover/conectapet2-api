@@ -4,12 +4,12 @@ const requireAuth = (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
 
   if (!authorizationHeader) {
-    return res.status(401).json({ error: "Autenticação necessária" });
+    return res.status(401).json({ error: "ERRO 401 - Autenticação necessária" });
   }
 
   const tokenParts = authorizationHeader.split(" ");
   if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
-    return res.status(401).json({ error: "Formato do Token errado" });
+    return res.status(401).json({ error: "ERRO 401 - Formato do Token invalido" });
   }
 
   const token = tokenParts[1];
@@ -27,7 +27,7 @@ const requireAuth = (req, res, next) => {
       err.message === "invalid signature"
     ) {
       // Handle JWT signature error
-      res.status(401).json({ error: "Invalid token" });
+      res.status(401).json({ error: "ERRO 401 - Token Invalido" });
     } else {
       // Handle other errors
 
@@ -36,12 +36,12 @@ const requireAuth = (req, res, next) => {
         err.message === "invalid signature"
       ) {
         // Handle JWT signature error
-        return res.status(401).json({ error: "Invalid token" });
+        return res.status(401).json({ error: "ERRO 401 - Token Invalido" });
       } else {
         // Handle other errors
         return res
           .status(401)
-          .json({ error: "Acesso Negado ou Token expirado" });
+          .json({ error: "ERRO 401 - Acesso Negado ou Token expirado" });
       }
     }
   }

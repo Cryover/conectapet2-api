@@ -19,11 +19,12 @@ const login = async (req, res) => {
       [username]
     );
 
-    const user = rows[0];
-    console.log(rows[0]);
-    if (rows.length === 0) {
+    if (rows.length === 0 || rows === undefined) {
+      console.log('rows vazio');
       return res.status(404).json({ error: "Usuario não existe." });
     } else {
+      const user = rows[0];
+      console.log('encontrou usuario!');
       if (bcrypt.compareSync(senha, user.senha)) {
         // User is authenticated; generate a JWT token
         const token = jwt.sign(
@@ -49,6 +50,30 @@ const login = async (req, res) => {
   }
 };
 
+const verifyToken = (req, res, next) => {
+  const { token } = req.body;
+  //const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  //console.log('token', token)
+  if (!token) {
+    return res.status(401).json({ message: 'Erro 401 - Token nao informado' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Erro 401 - Token expirado' });
+      } else if (err.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Erro 401 - Token invalido' });
+      } else {
+        return res.status(401).json({ message: 'Erro 401 - Verificacao de token falhou' });
+      }
+    }
+
+    return res.status(200).json({ message: 'Status 200 - Token Validado!' });
+  });
+};
+
 module.exports = {
   login,
+  verifyToken
 };

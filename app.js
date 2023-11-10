@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
 const requireAuth = require("./utils/jwtAuth");
 const swaggerOptions = require("./swaggerhub-spec.json");
 
@@ -21,7 +20,7 @@ const rotasConsulta = require("./routes/rotasConsulta");
 const rotasDespesa = require("./routes/rotasDespesa");
 
 app.use(connectDatabase);
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use("/api/v1/login", rotasLogin);
 app.use("/api/v1/usuarios", requireAuth, rotasUsuarios);
@@ -35,6 +34,14 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = swaggerJsdoc(options);
 
 app.use("/api/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Error-handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Erro 500 - Erro interno de Servidor" });
+});
+
+// 404 Not Found middleware
 app.all("*", (req, res) => {
   res.status(404).json({
     error: "ERRO 404 - Rota não encontrada ou inexistente",
