@@ -4,13 +4,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const login = async (req, res) => {
-  const { username, senha } = req.body;
+  const { username, password } = req.body;
 
   if (!username) {
     return res.status(400).json({ error: "Username é obrigatório." });
   }
-  if (!senha) {
-    return res.status(400).json({ error: "Senha é obrigatório." });
+  if (!password) {
+    return res.status(400).json({ error: "Senha é obrigatória." });
   }
 
   try {
@@ -25,7 +25,7 @@ const login = async (req, res) => {
     } else {
       const user = rows[0];
       console.log('encontrou usuario!');
-      if (bcrypt.compareSync(senha, user.senha)) {
+      if (bcrypt.compareSync(password, user.password)) {
         // User is authenticated; generate a JWT token
         const token = jwt.sign(
           { id: user.id, username: user.username },
@@ -41,7 +41,7 @@ const login = async (req, res) => {
         res.json(response);
       } else {
         // Authentication failed
-        return res.status(401).json({ error: "Usuário ou Senha inválidos" });
+        return res.status(401).json({ error: "Usuário ou password inválidos" });
       }
     }
   } catch (error) {
@@ -50,7 +50,7 @@ const login = async (req, res) => {
   }
 };
 
-const verifyToken = (req, res, next) => {
+const verifyToken = (req, res) => {
   const { token } = req.body;
   //const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
   //console.log('token', token)

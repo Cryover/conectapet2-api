@@ -19,9 +19,10 @@ const getAllPetsByOwner = async (req, res) => {
       "SELECT * FROM pets WHERE id_dono = $1",
       [id_dono]
     );
+    //console.error(rows)
     res.json(rows);
   } catch (error) {
-    //console.error(error);
+    console.error(error);
     res.status(500).json({ error: "Erro ao buscar pets por dono." });
   }
 };
