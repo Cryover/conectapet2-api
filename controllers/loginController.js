@@ -6,6 +6,8 @@ dotenv.config();
 const login = async (req, res) => {
   const { username, password } = req.body;
 
+  //console.log(username)
+
   if (!username) {
     return res.status(400).json({ error: "Username é obrigatório." });
   }
@@ -20,7 +22,7 @@ const login = async (req, res) => {
     );
 
     if (rows.length === 0 || rows === undefined) {
-      console.log('rows vazio');
+      console.log('rows vazio');r
       return res.status(404).json({ error: "Usuario não existe." });
     } else {
       const user = rows[0];
@@ -37,11 +39,11 @@ const login = async (req, res) => {
           userToken: token,
           usuario: rows[0]
         };
-
+        console.log('Response', response)
         res.json(response);
       } else {
         // Authentication failed
-        return res.status(401).json({ error: "Usuário ou password inválidos" });
+        return res.status(401).json({ error: "Usuário ou senha inválido." });
       }
     }
   } catch (error) {
@@ -57,6 +59,8 @@ const verifyToken = (req, res) => {
   if (!token) {
     return res.status(401).json({ message: 'Erro 401 - Token nao informado' });
   }
+
+
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {

@@ -12,7 +12,7 @@ const getAllPets = async (req, res) => {
 };
 
 const getAllPetsByOwner = async (req, res) => {
-  const id_dono = req.params.ownerId;
+  const id_dono = req.params.id;
 
   try {
     const { rows } = await req.dbClient.query(

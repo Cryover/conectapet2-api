@@ -16,7 +16,7 @@ const connectDatabase = require("./dataBase");
 const rotasLogin = require("./routes/rotasLogin");
 const rotasPets = require("./routes/rotasPets");
 const rotasUsuarios = require("./routes/rotasUsuarios");
-const rotasConsulta = require("./routes/rotasConsulta");
+const rotasCompromisso = require("./routes/rotasCompromisso");
 const rotasDespesa = require("./routes/rotasDespesa");
 
 app.use(connectDatabase);
@@ -25,7 +25,7 @@ app.use(express.json());
 app.use("/api/v1/login", rotasLogin);
 app.use("/api/v1/usuarios", requireAuth, rotasUsuarios);
 app.use("/api/v1/pets", requireAuth, rotasPets);
-app.use("/api/v1/consulta", requireAuth, rotasConsulta);
+app.use("/api/v1/compromisso", requireAuth, rotasCompromisso);
 app.use("/api/v1/despesa", requireAuth, rotasDespesa);
 
 // Set up Swagger documentation

@@ -6,11 +6,11 @@ const getAllDespesa = async (req, res) => {
     res.json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar itens." });
+    res.status(500).json({ error: "Erro ao buscar despesas." });
   }
 };
 
-const getDespesaByIdPet = async (req, res) => {
+const getAllDespesaByIdPet = async (req, res) => {
   const id_pet = req.params.id;
 
   if (!id_pet) {
@@ -36,17 +36,43 @@ const getDespesaByIdPet = async (req, res) => {
   }
 };
 
-const createDespesa = async (req, res) => {
-  const { name } = req.body;
+const getAllDespesaByIdOwner = async (req, res) => {
+  const id_dono = req.params.id;
 
-  if (!name) {
+  if (!id_dono) {
+    return res.status(400).json({ error: "Id_pet é obrigatório." });
+  }
+
+  try {
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM despesas WHERE id_dono = $1",
+      [id_dono]
+    );
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Nenhuma despesa encontrada." });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Erro ao buscar despesas por id_dono." });
+  }
+};
+
+const createDespesa = async (req, res) => {
+  const { nome } = req.body;
+
+  if (!nome) {
     return res.status(400).json({ error: "Nome é obrigatório." });
   }
 
   try {
     const { rows } = await req.dbClient.query(
-      "INSERT INTO despesa (name) VALUES ($1) RETURNING *",
-      [name]
+      "INSERT INTO despesa (nome) VALUES ($1) RETURNING *",
+      [nome]
     );
     res.status(201).json(rows[0]);
   } catch (error) {
@@ -57,16 +83,16 @@ const createDespesa = async (req, res) => {
 
 const updateDespesa = async (req, res) => {
   const id = req.params.id;
-  const { name } = req.body;
+  const { nome } = req.body;
 
-  if (!name) {
+  if (!nome) {
     return res.status(400).json({ error: "Nome é obrigatório." });
   }
 
   try {
     const { rows } = await req.dbClient.query(
-      "UPDATE despesa SET name = $1 WHERE id = $2 RETURNING *",
-      [name, id]
+      "UPDATE despesa SET nome = $1 WHERE id = $2 RETURNING *",
+      [nome, id]
     );
     if (rows.length === 0) {
       return res.status(404).json({ error: "usuario não encontrado." });
@@ -98,7 +124,8 @@ const deleteDespesa = async (req, res) => {
 
 module.exports = {
   getAllDespesa,
-  getDespesaByIdPet,
+  getAllDespesaByIdPet,
+  getAllDespesaByIdOwner,
   createDespesa,
   updateDespesa,
   deleteDespesa,

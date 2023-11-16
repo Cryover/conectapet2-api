@@ -32,8 +32,8 @@ const getUsuarioById = async (req, res) => {
 };
 
 const createUsuario = async (req, res) => {
-  const { username, email, nome, senha } = req.body;
-  const requiredFields = ['username', 'email', 'nome', 'senha'];
+  const { username, email, nome, password } = req.body;
+  const requiredFields = ['username', 'email', 'nome', 'password'];
   const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
 
   console.log(currentDateTime)
@@ -48,9 +48,8 @@ const createUsuario = async (req, res) => {
     const { rows } = await req.dbClient.query("SELECT * FROM usuarios WHERE username = $1 OR email = $2",[username, email]);
 
     if (rows.length === 0) {
-      const hashedPassword = await bcrypt.hash(req.body.senha, 10);
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
       
-
       const { savedUser } = await req.dbClient.query(
         "INSERT INTO usuarios (id, username, email, nome, senha, tipo_usuario, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
         [
@@ -68,7 +67,7 @@ const createUsuario = async (req, res) => {
         .json({ error: `ERRO 201 - Usuario ${username} criado com sucesso` });
     } else {
       //console.error(error);
-      res.status(409).json("Usuário já cadastrado com esse email");
+      res.status(409).json("Usuário já cadastrado com esse email ou nome de usuario");
     }
   } catch (e) {
     console.error(e);
