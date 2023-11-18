@@ -53,14 +53,16 @@ const login = async (req, res) => {
 };
 
 const verifyToken = (req, res) => {
-  const { token } = req.body;
-  //const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+  let token = req.headers.authorization;
   //console.log('token', token)
+
   if (!token) {
+    //console.log('token undefined')
     return res.status(401).json({ message: 'Erro 401 - Token nao informado' });
+  }else {
+    token = req.headers.authorization.split(' ')[1];
+    //console.log('new token', token)
   }
-
-
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
@@ -72,7 +74,7 @@ const verifyToken = (req, res) => {
         return res.status(401).json({ message: 'Erro 401 - Verificacao de token falhou' });
       }
     }
-
+    console.log('Token Validado');
     return res.status(200).json({ message: 'Status 200 - Token Validado!' });
   });
 };

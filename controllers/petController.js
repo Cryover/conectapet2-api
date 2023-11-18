@@ -46,15 +46,23 @@ const getPetById = async (req, res) => {
 };
 
 const createPet = async (req, res) => {
-  const { id_dono, nome, tipo_pet, raca, sexo } = req.body;
-  const requiredFields = ['id_dono', 'nome', 'tipo_pet', 'raca', 'sexo'];
+  const id_dono = req.params.id;
+  const {nome, tipo_pet, raca, cor, sexo, data_nascimento } = req.body;
+  const requiredFields = ['nome', 'tipo_pet', 'raca', 'cor', 'sexo', 'data_nascimento'];
   const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
+
+  if(!id_dono){
+    return res.status(400).json({ error: `Id de dono é obrigatório.` });
+  }
 
   for (const field of requiredFields) {
     if (!req.body[field]) {
+      console.error(`${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.`)
       return res.status(400).json({ error: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
     }
   }
+
+  //console.log('id_dono', id_dono)
 
   try {
     const { rows } = await req.dbClient.query(
@@ -67,8 +75,8 @@ const createPet = async (req, res) => {
     if (rows.length === 0) {
 
       const { savedPet } = await req.dbClient.query(
-        "INSERT INTO pets (id_dono, id, nome, tipo_pet, raca, sexo, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        [id_dono, crypto.randomUUID(), nome, tipo_pet, raca, sexo, currentDateTime]
+        "INSERT INTO pets (id_dono, id, nome, tipo_pet, raca, sexo, criado_em, cor, data_nascimento) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+        [id_dono, crypto.randomUUID(), nome, tipo_pet, raca, sexo, currentDateTime, cor, data_nascimento]
       );
       res
         .status(201)
@@ -76,7 +84,7 @@ const createPet = async (req, res) => {
     } else {
       res
         .status(409)
-        .json({ error: "ERRO 409 - Pet ja vinculado a um dono!" });
+        .json({ error: "ERRO 409 - Pet ja vinculado a dono!" });
     }
   } catch (error) {
     console.error(error);
