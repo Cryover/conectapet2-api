@@ -5,10 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "build": "set NODE_ENV=production && node app.js",
-    "start:development": "NODE_ENV=development node -r app.js",
-    "start:production": "NODE_ENV=production && npm install && node -r app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-buid": ""
   },
   "author": "Jonatan Goulart Maciel",
   "license": "ISC",
