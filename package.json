@@ -4,9 +4,9 @@
   "description": "Api para o app conectapet2",
   "main": "app.js",
   "scripts": {
-    "start": "src/app.js",
-    "dev": "nodemon src/app.js",
-    "build": "src/app.js",
+    "start": "./src/app.js",
+    "dev": "nodemon ./src/app.js",
+    "build": "./src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-buid": ""
   },
