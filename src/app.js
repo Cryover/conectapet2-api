@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
-const requireAuth = require("./src/utils/jwtAuth");
-const swaggerOptions = require("./swaggerhub-spec.json");
+const requireAuth = require("./utils/jwtAuth");
+const swaggerOptions = require("../swaggerhub-spec.json");
 
 const options = {
   definition: swaggerOptions,
@@ -12,12 +12,12 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-const connectDatabase = require("./src/dataBase");
-const rotasLogin = require("./src/routes/rotasLogin");
-const rotasPets = require("./src/routes/rotasPets");
-const rotasUsuarios = require("./src/routes/rotasUsuarios");
-const rotasCompromisso = require("./src/routes/rotasCompromisso");
-const rotasDespesa = require("./src/routes/rotasDespesa");
+const connectDatabase = require("./dataBase");
+const rotasLogin = require("./routes/rotasLogin");
+const rotasPets = require("./routes/rotasPets");
+const rotasUsuarios = require("./routes/rotasUsuarios");
+const rotasCompromisso = require("./routes/rotasCompromisso");
+const rotasDespesa = require("./routes/rotasDespesa");
 
 app.use(connectDatabase);
 app.use(express.json());
