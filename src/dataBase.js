@@ -1,12 +1,10 @@
 const pg = require("pg");
 
-// Create a connection pool
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_PROD_URL,
-  ssl: false,
+  connectionString: process.env.DATABASE_PROD2_URL,
+  ssl: process.env.DATABASE_PROD2_URL ? true : false,
 });
 
-// Middleware to acquire a database connection from the pool
 function connectDatabase(req, res, next) {
   pool.connect((err, client, done) => {
     if (err) {
@@ -16,7 +14,13 @@ function connectDatabase(req, res, next) {
       //console.log("Connected to Database");
     }
 
-    // Attach the database client and done function to the request object
+    // Set up an event listener to handle connection errors
+    client.on("error", (error) => {
+      console.error("Database connection error", error);
+      // Release the client explicitly to avoid leaving the connection in a bad state
+      done(client);
+    });
+
     req.dbClient = client;
     req.dbDone = done;
     next();

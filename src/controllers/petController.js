@@ -1,5 +1,4 @@
 const crypto = require("crypto");
-const moment = require('moment');
 
 const getAllPets = async (req, res) => {
   try {
@@ -49,7 +48,7 @@ const createPet = async (req, res) => {
   const id_dono = req.params.id;
   const {nome, tipo_pet, raca, cor, sexo, data_nascimento } = req.body;
   const requiredFields = ['nome', 'tipo_pet', 'raca', 'cor', 'sexo', 'data_nascimento'];
-  const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
+  const currentDateTime = new Date().toISOString();
 
   if(!id_dono){
     return res.status(400).json({ error: `Id de dono é obrigatório.` });

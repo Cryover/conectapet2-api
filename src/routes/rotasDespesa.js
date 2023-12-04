@@ -3,8 +3,10 @@ const router = express.Router();
 const despesaController = require("../controllers/despesaController");
 
 router.get("/", despesaController.getAllDespesa);
-router.get("/pet/:id", despesaController.getAllDespesaByIdPet);
-router.get("/owner/:id", despesaController.getAllDespesaByIdOwner);
+router.get("/bypet/:id", despesaController.getAllDespesaByIdPet);
+router.get("/byowner/:id", despesaController.getAllDespesaByIdOwner);
+router.get("/byowner/:id/:month", despesaController.getAllDespesaByMonth);
+router.get("/byowner/:id/:year", despesaController.getAllDespesaByYear);
 router.post("/", despesaController.createDespesa);
 router.put("/:id", despesaController.updateDespesa);
 router.delete("/:id", despesaController.deleteDespesa);

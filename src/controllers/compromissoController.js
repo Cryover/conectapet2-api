@@ -72,6 +72,68 @@ const getAllCompromissoByIdOwner = async (req, res) => {
   }
 };
 
+const getAllCompromissoByMonth = async (req, res) => {
+  const id_dono = req.params.id;
+  const month = req.params.month;
+
+  if (!id_dono) {
+    return res.status(400).json({ error: "Id_dono é obrigatório." });
+  }
+
+  if (!month) {
+    return res.status(400).json({ error: "Mês é obrigatório." });
+  }
+
+  try {
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM compromisso WHERE id_dono = $1 AND EXTRACT(MONTH FROM data) = EXTRACT(MONTH FROM $2::date)",
+      [id_dono, `${month}-01`]
+    );
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: `Nenhum compromisso encontrado em ${month}.` });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Erro ao buscar compromissos por id_dono." });
+  }
+};
+
+const getAllCompromissoByYear = async (req, res) => {
+  const id_dono = req.params.id;
+  const year = req.params.year;
+
+  if (!id_dono) {
+    return res.status(400).json({ error: "Id_dono é obrigatório." });
+  }
+
+  if (!year) {
+    return res.status(400).json({ error: "Ano é obrigatório." });
+  }
+
+  try {
+    const { rows } = await req.dbClient.query(
+      "SELECT * FROM compromisso WHERE id_dono = $1 AND EXTRACT(YEAR FROM data) = EXTRACT(YEAR FROM $2::date)",
+      [id_dono, `${year}-01`]
+    );
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ error: `Nenhum compromisso encontrado em ${year}.` });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Erro ao buscar compromissos por id_dono." });
+  }
+};
+
 const createCompromisso = async (req, res) => {
   const { nome } = req.body;
 
@@ -146,6 +208,8 @@ module.exports = {
   getAllCompromisso,
   getAllCompromissoByIdPet,
   getAllCompromissoByIdOwner,
+  getAllCompromissoByMonth,
+  getAllCompromissoByYear,
   createCompromisso,
   updateCompromisso,
   deleteCompromisso,

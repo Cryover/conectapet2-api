@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const moment = require('moment');
+const { TiposUsuario } = require('../utils/enums.js');
 
 const getAllUsuarios = async (req, res) => {
   try {
@@ -10,6 +10,8 @@ const getAllUsuarios = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao buscar itens." });
+  } finally {
+    //req.dbDone();
   }
 };
 
@@ -33,11 +35,12 @@ const getUsuarioById = async (req, res) => {
 
 const createUsuario = async (req, res) => {
   const { username, email, nome, password } = req.body;
-  const requiredFields = ['username', 'email', 'nome', 'password'];
-  const currentDateTime = moment().format('DD/MM/YYYY HH:mm:ss');
+  const requiredFields = ['username', 'email', 'password'];
+  const currentDateTime = new Date().toISOString();
+  const tipoUsuario = TiposUsuario.PADRAO;
 
   console.log(currentDateTime)
-
+  console.log(new Date().toISOString())
   for (const field of requiredFields) {
     if (!req.body[field]) {
       return res.status(400).json({ error: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
@@ -51,14 +54,14 @@ const createUsuario = async (req, res) => {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       
       const { savedUser } = await req.dbClient.query(
-        "INSERT INTO usuarios (id, username, email, nome, senha, tipo_usuario, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+        "INSERT INTO usuarios (id, username, email, nome, password, tipo_usuario, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
         [
           crypto.randomUUID(),
-          username,
+          username.toLowerCase(),
           email,
-          nome.toLowerCase(),
+          nome ? nome.toLowerCase() : undefined,
           hashedPassword,
-          "padrao",
+          tipoUsuario,
           currentDateTime
         ]
       );
