@@ -3,15 +3,15 @@ const crypto = require("crypto");
 const getAllPets = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query("SELECT * FROM pets");
-    res.json(rows);
+    return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar pets." });
+    return res.status(500).json({ error: "Erro ao buscar pets." });
   }
 };
 
 const getAllPetsByOwner = async (req, res) => {
-  const id_dono = req.params.id;
+  const id_dono = req.query.id;
 
   try {
     const { rows } = await req.dbClient.query(
@@ -19,10 +19,10 @@ const getAllPetsByOwner = async (req, res) => {
       [id_dono]
     );
     //console.error(rows)
-    res.json(rows);
+    return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar pets por dono." });
+    return res.status(500).json({ error: "Erro ao buscar pets por dono." });
   }
 };
 
@@ -37,15 +37,15 @@ const getPetById = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Item não encontrado." });
     }
-    res.json(rows[0]);
+    return res.status(200).json(rows[0]);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar o item por ID." });
+    return res.status(500).json({ error: "Erro ao buscar o item por ID." });
   }
 };
 
 const createPet = async (req, res) => {
-  const id_dono = req.params.id;
+  const id_dono = req.query.id;
   const {nome, tipo_pet, raca, cor, sexo, data_nascimento } = req.body;
   const requiredFields = ['nome', 'tipo_pet', 'raca', 'cor', 'sexo', 'data_nascimento'];
   const currentDateTime = new Date().toISOString();
@@ -77,45 +77,78 @@ const createPet = async (req, res) => {
         "INSERT INTO pets (id_dono, id, nome, tipo_pet, raca, sexo, criado_em, cor, data_nascimento) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
         [id_dono, crypto.randomUUID(), nome, tipo_pet, raca, sexo, currentDateTime, cor, data_nascimento]
       );
-      res
+      return res
         .status(201)
         .json({ message: "Pet adicionado e vinculado com sucesso." });
     } else {
-      res
+      return res
         .status(409)
         .json({ error: "ERRO 409 - Pet ja vinculado a dono!" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "ERRO 500 - Erro ao adicionar pet." });
+    return res.status(500).json({ error: "ERRO 500 - Erro ao adicionar pet." });
   }
 };
 
 const updatePet = async (req, res) => {
-  const id = req.params.id;
-  const { name } = req.body;
+  const id = req.query.id;
+  const { nome, tipo_pet, raca, sexo, criado_em, cor, data_nascimento } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ error: "Nome é obrigatório." });
+  if (!nome && !tipo_pet && !raca && !sexo && !criado_em && !cor && !data_nascimento) {
+    return res.status(400).json({ error: "Pelo menos um campo deve ser fornecido para atualização de pet." });
   }
 
   try {
-    const { rows } = await req.dbClient.query(
-      "UPDATE pets SET name = $1 WHERE id = $2 RETURNING *",
-      [name, id]
-    );
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "pet não encontrado." });
+    const updates = [];
+    const values = [];
+
+    if (nome) {
+      updates.push("nome = $1");
+      values.push(nome);
     }
-    res.json(rows[0]);
+    if (tipo_pet) {
+      updates.push("tipo_pet = $2");
+      values.push(tipo_pet);
+    }
+    if (raca) {
+      updates.push("raca = $3");
+      values.push(raca);
+    }
+    if (sexo) {
+      updates.push("sexo = $4");
+      values.push(sexo);
+    }
+    if (criado_em) {
+      updates.push("criado_em = $5");
+      values.push(criado_em);
+    }
+    if (cor) {
+      updates.push("cor = $6");
+      values.push(cor);
+    }
+    if (data_nascimento) {
+      updates.push("data_nascimento = $7");
+      values.push(data_nascimento);
+    }
+
+    const updateQuery = `UPDATE pets SET ${updates.join(', ')} WHERE id = $8`;
+    const queryValues = [nome, tipo_pet, raca, sexo, criado_em, cor, data_nascimento, id];
+    const { rows } = await req.dbClient.query(updateQuery, queryValues);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Pet não encontrado." });
+    }
+
+    return res.status(200).json({ message: "Pet atualizado com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao atualizar o pet." });
+    return res.status(500).json({ error: "Erro ao atualizar o pet." });
   }
 };
 
 const deletePet = async (req, res) => {
-  const id = req.params.id;
+  const id = req.query.id; 
 
   try {
     const result = await req.dbClient.query("DELETE FROM pets WHERE id = $1", [
@@ -124,10 +157,10 @@ const deletePet = async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({ error: "pet não encontrado." });
     }
-    res.json({ message: "pet excluído com sucesso." });
+    return res.status(200).json({ message: "pet excluído com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao excluir o pet." });
+    return res.status(500).json({ error: "Erro ao excluir o pet." });
   }
 };
 

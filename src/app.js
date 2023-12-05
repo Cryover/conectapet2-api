@@ -38,12 +38,12 @@ app.use("/api/v1/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Error-handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Erro 500 - Erro interno de Servidor" });
+  return res.status(500).json({ error: "Erro 500 - Erro interno de Servidor" });
 });
 
 // 404 Not Found middleware
 app.all("*", (req, res) => {
-  res.status(404).json({
+  return res.status(404).json({
     error: "ERRO 404 - Rota não encontrada ou inexistente",
   });
 });

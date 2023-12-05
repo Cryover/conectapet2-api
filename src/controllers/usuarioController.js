@@ -5,11 +5,10 @@ const { TiposUsuario } = require('../utils/enums.js');
 const getAllUsuarios = async (req, res) => {
   try {
     const { rows } = await req.dbClient.query("SELECT * FROM usuarios");
-    res.json(rows);
-    res.status(200).json({ error: "Operação bem-sucedida." });
+    return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar itens." });
+    return res.status(500).json({ error: "Erro ao buscar itens." });
   } finally {
     //req.dbDone();
   }
@@ -26,10 +25,10 @@ const getUsuarioById = async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: "Usuario não encontrado." });
     }
-    res.json(rows[0]);
+    return res.status(200).json(rows[0]);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar o Usuario por ID." });
+    return res.status(500).json({ error: "Erro ao buscar o Usuario por ID." });
   }
 };
 
@@ -51,7 +50,7 @@ const createUsuario = async (req, res) => {
     const { rows } = await req.dbClient.query("SELECT * FROM usuarios WHERE username = $1 OR email = $2",[username, email]);
 
     if (rows.length === 0) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       
       const { savedUser } = await req.dbClient.query(
         "INSERT INTO usuarios (id, username, email, nome, password, tipo_usuario, criado_em) VALUES ($1, $2, $3, $4, $5, $6, $7)",
@@ -65,44 +64,80 @@ const createUsuario = async (req, res) => {
           currentDateTime
         ]
       );
-      res
+      return res
         .status(201)
         .json({ error: `ERRO 201 - Usuario ${username} criado com sucesso` });
     } else {
       //console.error(error);
-      res.status(409).json("Usuário já cadastrado com esse email ou nome de usuario");
+      return res.status(409).json("Usuário já cadastrado com esse email ou nome de usuario");
     }
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: "Erro ao criar um usuario." });
+    return res.status(500).json({ error: "Erro ao criar um usuario." });
   }
 };
 
 const updateUsuario = async (req, res) => {
-  const id = req.params.id;
-  const { name } = req.body;
+  const id = req.query.id;
+  const { username, email, nome, password, tipo_usuario, criado_em } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ error: "Nome é obrigatório." });
+  if (!username && !email && !nome && !password && !criado_em) {
+    return res.status(400).json({ error: "Pelo menos um campo deve ser fornecido para atualização de usuario." });
   }
 
   try {
-    const { rows } = await req.dbClient.query(
-      "UPDATE usuarios SET name = $1 WHERE id = $2 RETURNING *",
-      [name, id]
-    );
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "usuario não encontrado." });
+    const updates = [];
+    const values = [];
+
+    if (username) {
+      updates.push("username = $1");
+      values.push(username);
     }
-    res.json(rows[0]);
+    if (email) {
+      updates.push("email = $2");
+      values.push(email);
+    }
+    if (nome) {
+      updates.push("nome = $3");
+      values.push(nome);
+    }
+    if (password) {
+      updates.push("password = $4");
+      values.push(password);
+    }
+    if(id === process.env.ID_ADMIN){
+      if (tipo_usuario) {
+        updates.push("tipo_usuario = $5");
+        values.push(tipo_usuario);
+      }
+    }
+    if (criado_em) {
+      if(id === process.env.ID_ADMIN){
+        updates.push("criado_em = $6");
+      }else {
+        updates.push("criado_em = $5");
+      }
+
+      values.push(criado_em);
+    }
+
+    const updateQuery = `UPDATE despesa SET ${updates.join(', ')} WHERE id = $7`;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const queryValues = [username, email, nome, hashedPassword, tipo_usuario, criado_em, id];
+
+    const { rows } = await req.dbClient.query(updateQuery, queryValues);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Usuario não encontrado." });
+    }
+    return res.status(200).json({ message: "Usuario atualizado com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao atualizar o usuario." });
+    return res.status(500).json({ error: "Erro ao atualizar o usuario." });
   }
 };
 
 const deleteUsuario = async (req, res) => {
-  const id = req.params.id;
+  const id = req.query.id;
 
   try {
     const result = await req.dbClient.query(
@@ -110,12 +145,12 @@ const deleteUsuario = async (req, res) => {
       [id]
     );
     if (result.rowCount === 0) {
-      return res.status(404).json({ error: "usuario não encontrado." });
+      return res.status(404).json({ error: "Usuario não encontrado." });
     }
-    res.json({ message: "usuario excluído com sucesso." });
+    return res.status(200).json({ message: "Usuario excluído com sucesso." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao excluir o usuario." });
+    return res.status(500).json({ error: "Erro ao excluir o usuario." });
   }
 };
 

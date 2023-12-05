@@ -27,7 +27,7 @@ const requireAuth = (req, res, next) => {
       err.message === "invalid signature"
     ) {
       // Handle JWT signature error
-      res.status(401).json({ error: "ERRO 401 - Token Invalido" });
+      return res.status(401).json({ error: "ERRO 401 - Token Invalido" });
     } else {
       // Handle other errors
 

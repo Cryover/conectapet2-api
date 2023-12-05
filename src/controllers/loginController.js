@@ -40,7 +40,7 @@ const login = async (req, res) => {
           usuario: rows[0]
         };
         console.log('Response', response)
-        res.json(response);
+        return res.status(200).json(response);
       } else {
         // Authentication failed
         return res.status(401).json({ error: "Usuário ou senha inválido." });
@@ -48,7 +48,7 @@ const login = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro 500 - Erro interno do servidor" });
+    return res.status(500).json({ error: "Erro 500 - Erro interno do servidor" });
   }
 };
 
