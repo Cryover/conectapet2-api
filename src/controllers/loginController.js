@@ -54,7 +54,7 @@ const login = async (req, res) => {
 
 const verifyToken = (req, res) => {
   let token = req.headers.authorization;
-  //console.log('token', token)
+  console.log('Verificando Token', token)
 
   if (!token) {
     //console.log('token undefined')

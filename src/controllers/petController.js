@@ -155,6 +155,7 @@ const deletePet = async (req, res) => {
       id,
     ]);
     if (result.rowCount === 0) {
+      console.log('pet não encontrado.');
       return res.status(404).json({ error: "pet não encontrado." });
     }
     return res.status(200).json({ message: "pet excluído com sucesso." });
