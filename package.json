@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2 start src/app.js --watch --name conectapet",
     "dev": "nodemon src/app.js",
-    "build": "node src/app.js",
+    "build": "npm install && pm2 start src/app.js --watch --name conectapet",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-buid": ""
   },

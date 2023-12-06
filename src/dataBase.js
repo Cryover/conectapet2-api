@@ -1,9 +1,14 @@
 const pg = require("pg");
 
 const pool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
+});
+
+/* const pool = new pg.Pool({
   connectionString: process.env.DATABASE_PROD2_URL,
   ssl: process.env.DATABASE_PROD2_URL ? true : false,
-});
+}); */
 
 function connectDatabase(req, res, next) {
   pool.connect((err, client, done) => {
