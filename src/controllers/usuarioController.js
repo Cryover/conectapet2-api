@@ -8,7 +8,7 @@ const getAllUsuarios = async (req, res) => {
     return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Erro ao buscar itens." });
+    return res.status(500).json({ message: "Erro ao buscar Usuarios." });
   } finally {
     //req.dbDone();
   }
@@ -17,9 +17,11 @@ const getAllUsuarios = async (req, res) => {
 const getUsuarioById = async (req, res) => {
   const id = req.query.id;
 
+  console.log('ID', id);
+
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM items WHERE id = $1",
+      "SELECT * FROM usuarios WHERE id = $1",
       [id]
     );
     if (rows.length === 0) {
@@ -98,10 +100,10 @@ const updateUsuario = async (req, res) => {
   
   try {
     if(id === process.env.ID_ADMIN){
-      updateQuery = `UPDATE despesa SET username = $1, email = $2, nome = $3, password = $4, tipo_usuario = $5 WHERE id = $6`;
+      updateQuery = `UPDATE usuarios SET username = $1, email = $2, nome = $3, password = $4, tipo_usuario = $5 WHERE id = $6`;
       queryValues = [username, email, nome, hashedPassword, tipo_usuario, id]
     }else {
-      updateQuery = `UPDATE despesa SET username = $1, email = $2, nome = $3, password = $4 WHERE id = $5`;
+      updateQuery = `UPDATE usuarios SET username = $1, email = $2, nome = $3, password = $4 WHERE id = $5`;
       queryValues = [username, email, nome, hashedPassword, id]
     }
    
@@ -159,19 +161,17 @@ const patchUsuario = async (req, res) => {
         placeholderCount++;
       }
     }
-
+    
     values.push(id);
-    placeholderCount++;
 
-    const updateQuery = `UPDATE despesa SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
-
-    const { rows } = await req.dbClient.query(updateQuery,values);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado." });
-    }
+    const updateQuery = `UPDATE usuarios SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
+    console.log('updates', updates);
+    console.log('values', values);
+    console.log('placeholderCount', placeholderCount)
+    console.log('updateQuery', updateQuery);
+    await req.dbClient.query(updateQuery,values);
     return res.status(200).json({ message: "Usuario atualizado com sucesso." });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar o usuario." });
   }
 };
@@ -180,13 +180,10 @@ const deleteUsuario = async (req, res) => {
   const id = req.query.id;
 
   try {
-    const result = await req.dbClient.query(
+    await req.dbClient.query(
       "DELETE FROM usuarios WHERE id = $1",
       [id]
     );
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado." });
-    }
     return res.status(200).json({ message: "Usuario excluído com sucesso." });
   } catch (error) {
     console.error(error);

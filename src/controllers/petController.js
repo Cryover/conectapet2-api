@@ -17,7 +17,7 @@ const getAllPetsByOwner = async (req, res) => {
 };
 
 const getPetById = async (req, res) => {
-  const id = req.params.id;
+  const id = req.query.id;
 
   try {
     const { rows } = await req.dbClient.query(
@@ -25,12 +25,12 @@ const getPetById = async (req, res) => {
       [id]
     );
     if (rows.length === 0) {
-      return res.status(404).json({ message: "Item não encontrado." });
+      return res.status(404).json({ message: "ID de pet nao existe." });
     }
     return res.status(200).json(rows[0]);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Erro ao buscar o item por ID." });
+    return res.status(500).json({ message: "Erro ao buscar o Pet por ID." });
   }
 };
 
@@ -151,17 +151,12 @@ const patchPet = async (req, res) => {
     }
 
     values.push(id);
-    placeholderCount++;
 
     const updateQuery = `UPDATE pets SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
 
-    const { rows } = await req.dbClient.query(updateQuery,values);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Pet não encontrado." });
-    }
+    await req.dbClient.query(updateQuery,values);
     return res.status(200).json({ message: "Pet atualizado com sucesso." });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar Pet." });
   }
 };
@@ -170,13 +165,7 @@ const deletePet = async (req, res) => {
   const id = req.query.id; 
 
   try {
-    const result = await req.dbClient.query("DELETE FROM pets WHERE id = $1", [
-      id,
-    ]);
-    if (result.rowCount === 0) {
-      console.log('pet não encontrado.');
-      return res.status(404).json({ message: "pet não encontrado." });
-    }
+   await req.dbClient.query("DELETE FROM pets WHERE id = $1", [id]);
     return res.status(200).json({ message: "pet excluído com sucesso." });
   } catch (error) {
     console.error(error);

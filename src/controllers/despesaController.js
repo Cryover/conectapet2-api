@@ -162,7 +162,7 @@ const createDespesa = async (req, res) => {
 
   for (const field of requiredFields) {
     if (!req.body[field]) {
-      console.error(`${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.`)
+      console.log(`${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.`)
       return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
     }
   }
@@ -183,13 +183,12 @@ const createDespesa = async (req, res) => {
     );
     return res.status(201).json({ message: "Despesa criada com sucesso." });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Erro ao criar Compromisso." });
+    return res.status(500).json({ message: "Erro ao criar Despesa." });
   }
 };
 
 const updateDespesa = async (req, res) => {
-  const id_dono = req.query.id;
+  const id = req.query.id;
   const { id_pet, nome, descricao, data, observacao } = req.body;
 
   if (id_pet || !nome || !descricao || !data || !observacao) {
@@ -198,16 +197,12 @@ const updateDespesa = async (req, res) => {
 
   try {
     const updateQuery = `UPDATE despesa SET id_pet = $1, nome = $2, descricao = $3, data = $4, observacao = $5 WHERE id = $6`;
-    const queryValues = [id_pet, nome, descricao, data, observacao, id_dono];
+    const queryValues = [id_pet, nome, descricao, data, observacao, id];
 
-    const { rows } = await req.dbClient.query(updateQuery, queryValues);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado." });
-    }
-    return res.status(200).json({ message: "Usuario atualizado com sucesso." });
+    await req.dbClient.query(updateQuery, queryValues);
+    return res.status(200).json({ message: "Despesa atualizado com sucesso." });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Erro ao atualizar o usuario." });
+    return res.status(500).json({ message: "Erro ao atualizar despesa." });
   }
 };
 
@@ -253,28 +248,14 @@ const patchDespesa = async (req, res) => {
         placeholderCount++;
       }
     }
-    if (criado_em) {
-      if (id === process.env.ID_ADMIN) {
-        updates.push(`criado_em = $${placeholderCount}`);
-      } else {
-        updates.push(`criado_em = $${placeholderCount}`);
-      }
-      values.push(criado_em);
-      placeholderCount++;
-    }
 
     values.push(id_dono);
-    placeholderCount++;
 
     const updateQuery = `UPDATE despesa SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
 
-    const { rows } = await req.dbClient.query(updateQuery, values);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado." });
-    }
+    await req.dbClient.query(updateQuery, values);
     return res.status(200).json({ message: "Usuario atualizado com sucesso." });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar o usuario." });
   }
 };
@@ -283,16 +264,12 @@ const deleteDespesa = async (req, res) => {
   const id = req.query.id;
 
   try {
-    const result = await req.dbClient.query(
+    await req.dbClient.query(
       "DELETE FROM despesa WHERE id = $1",
       [id]
     );
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Usuario não encontrado." });
-    }
     return res.status(200).json({ message: "Usuario excluído com sucesso." });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Erro ao excluir o usuario." });
   }
 };

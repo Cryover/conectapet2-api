@@ -163,7 +163,7 @@ const createCompromisso = async (req, res) => {
   }
 
   try {
-    const { rows } = await req.dbClient.query(
+    await req.dbClient.query(
       "INSERT INTO compromisso (id, id_pets, nome, descricao, data, tipo_compromisso, id_dono, criado_em) VALUES ($1,$2,$3,$4,$5,$6,$7)",
       [
         crypto.randomUUID(),
@@ -246,7 +246,6 @@ const patchCompromisso = async (req, res) => {
     }
 
     values.push(id);
-    placeholderCount++;
 
     const updateQuery = `UPDATE compromisso SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
 
@@ -265,15 +264,10 @@ const deleteCompromisso = async (req, res) => {
   const id = req.query.id;
 
   try {
-    const result = await req.dbClient.query(
+    await req.dbClient.query(
       "DELETE FROM compromisso WHERE id = $1",
       [id]
     );
-    if (result.rowCount === 0) {
-      return res
-        .status(404)
-        .json({ message: "Compromisso não encontrada." });
-    }
     return res.status(200).json({ message: "Compromisso excluída com sucesso." });
   } catch (error) {
     console.error(error);

@@ -22,8 +22,8 @@ const login = async (req, res) => {
     );
 
     if (rows.length === 0 || rows === undefined) {
-      console.log('rows vazio');
-      return res.status(404).json({ message: "Usuario não existe." });
+      //console.log('rows vazio');
+      return res.status(404).json({ message: "Usuario não cadastrado." });
     } else {
       const user = rows[0];
       console.log('encontrou usuario!');
