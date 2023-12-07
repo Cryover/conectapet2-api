@@ -9,10 +9,10 @@ const login = async (req, res) => {
   //console.log(username)
 
   if (!username) {
-    return res.status(400).json({ error: "Username é obrigatório." });
+    return res.status(400).json({ message: "Username é obrigatório." });
   }
   if (!password) {
-    return res.status(400).json({ error: "Senha é obrigatória." });
+    return res.status(400).json({ message: "Senha é obrigatória." });
   }
 
   try {
@@ -22,8 +22,8 @@ const login = async (req, res) => {
     );
 
     if (rows.length === 0 || rows === undefined) {
-      console.log('rows vazio');r
-      return res.status(404).json({ error: "Usuario não existe." });
+      console.log('rows vazio');
+      return res.status(404).json({ message: "Usuario não existe." });
     } else {
       const user = rows[0];
       console.log('encontrou usuario!');
@@ -43,12 +43,12 @@ const login = async (req, res) => {
         return res.status(200).json(response);
       } else {
         // Authentication failed
-        return res.status(401).json({ error: "Usuário ou senha inválido." });
+        return res.status(401).json({ message: "Usuário ou senha inválido." });
       }
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: "Erro 500 - Erro interno do servidor" });
+    return res.status(500).json({ message: "Erro 500 - Erro interno do servidor" });
   }
 };
 
