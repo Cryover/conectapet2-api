@@ -217,6 +217,7 @@ const createDespesa = async (req, res) => {
     );
     return res.status(201).json({ message: "Despesa criada com sucesso." });
   } catch (error) {
+    console.log('error', error);
     return res.status(500).json({ message: "Erro ao criar Despesa." });
   } finally {
     req.dbDone();

@@ -11,8 +11,9 @@ const pool = new pg.Pool({
   retry: {
     max: 3,
   },
-  idleTimeoutMillis: 30000, 
-  connectionTimeoutMillis: 5000, 
+  max: 10,
+  idleTimeoutMillis: 20000, 
+  connectionTimeoutMillis: 2000, 
 });
 
 function connectDatabase(req, res, next) {
