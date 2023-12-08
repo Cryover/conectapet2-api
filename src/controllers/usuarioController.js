@@ -70,7 +70,7 @@ const createUsuario = async (req, res) => {
       );
       return res
         .status(201)
-        .json({ message: `ERRO 201 - Usuario ${username} criado com sucesso` });
+        .json({ message: `Usuario ${username} criado com sucesso` });
     } else {
       return res.status(409).json("Usuário já cadastrado com esse email ou nome de usuario");
     }

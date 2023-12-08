@@ -147,10 +147,9 @@ const getAllDespesaByYear = async (req, res) => {
 };
 
 const createDespesa = async (req, res) => {
-  const id_dono = req.query.donoId;
-  const id_pet = req.query.petId;
-  const { nome, valor, data, hora, observacao } = req.body;
-  const requiredFields = ['nome', 'valor', 'data', 'observacao'];
+  const id_dono = req.query.id;
+  const { id_pet, nome, valor, data, hora, observacao } = req.body;
+  const requiredFields = ['id_pet', 'nome', 'valor', 'data', 'observacao'];
   const currentDateTime = new Date().toISOString();
   let newData;
 
