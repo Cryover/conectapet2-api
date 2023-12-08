@@ -7,7 +7,7 @@ if (!process.env.DATABASE_PROD_URL) {
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_PROD_URL,
-  ssl: false,
+  ssl: { rejectUnauthorized: false }
 });
 
 function connectDatabase(req, res, next) {
