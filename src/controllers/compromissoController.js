@@ -54,7 +54,7 @@ const getAllCompromissoByIdOwner = async (req, res) => {
 
 const getAllCompromissoByDay = async (req, res) => {
   const id_dono = req.params.id;
-  const day = req.query.day;
+  const day = req.params.day;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_dono é obrigatório." });
@@ -85,7 +85,7 @@ const getAllCompromissoByDay = async (req, res) => {
 
 const getAllCompromissoByMonth = async (req, res) => {
   const id_dono = req.params.id;
-  const month = req.query.month;
+  const month = req.params.month;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_dono é obrigatório." });
@@ -116,7 +116,7 @@ const getAllCompromissoByMonth = async (req, res) => {
 
 const getAllCompromissoByYear = async (req, res) => {
   const id_dono = req.params.id;
-  const year = req.query.year;
+  const year = req.params.year;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_dono é obrigatório." });
@@ -147,9 +147,10 @@ const getAllCompromissoByYear = async (req, res) => {
 
 const createCompromisso = async (req, res) => {
   const id_dono = req.query.id;
-  const { ids_pets, nome, descricao, data, tipo_compromisso } = req.body;
+  const { ids_pets, nome, descricao, data, hora, tipo_compromisso } = req.body;
   const requiredFields = ['ids_pets', 'nome', 'descricao', 'data', 'tipo_compromisso'];
-  const currentDateTime = new Date().toISOString();
+  const currentDateTime = new Date().toLocaleDateString();
+  let newData;
 
   if(!id_dono){
     return res.status(400).json({ message: `Id de dono é obrigatório.` });
@@ -162,6 +163,22 @@ const createCompromisso = async (req, res) => {
     }
   }
 
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
+  }
+
+  if(data && hora) {
+    newData = combineDateAndTime(data, hora);
+  } else {
+    if(data){
+      newData = data;
+    }
+    if(hora){
+      newData = hora;
+    }
+  }
+
   try {
     await req.dbClient.query(
       "INSERT INTO compromisso (id, id_pets, nome, descricao, data, tipo_compromisso, id_dono, criado_em) VALUES ($1,$2,$3,$4,$5,$6,$7)",
@@ -170,7 +187,7 @@ const createCompromisso = async (req, res) => {
         ids_pets,
         nome,
         descricao,
-        data,
+        newData,
         tipo_compromisso,
         id_dono,
         currentDateTime
@@ -185,15 +202,25 @@ const createCompromisso = async (req, res) => {
 
 const updateCompromisso = async (req, res) => {
   const id = req.query.id;
-  const { ids_pets, nome, descricao, data, tipo_compromisso } = req.body;
-  
-  if (!ids_pets || !nome || !descricao || !data || !tipo_compromisso) {
-    return res.status(400).json({ message: "Todos campos devem estar preenchidos para a atualização de usuario." });
+  const { ids_pets, nome, descricao, data, hora, tipo_compromisso } = req.body;
+  const requiredFields = ['ids_pets', 'nome', 'descricao', 'data', 'hora', 'tipo_compromisso'];
+
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      console.error(`${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.`)
+      return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
+    }
+  }
+
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
   }
   
   try {
+    const combinedDatetime = combineDateAndTime(data, hora);
     const updateQuery = `UPDATE compromisso SET ids_pets = $1, nome = $2, descricao = $3, data = $4, tipo_compromisso = $5 WHERE id = $6`;
-    const queryValues = [ids_pets, nome, descricao, data, tipo_compromisso, id];
+    const queryValues = [ids_pets, nome, descricao, combinedDatetime, tipo_compromisso, id];
    
     const { rows } = await req.dbClient.query(updateQuery,queryValues);
     if (rows.length === 0) {
@@ -208,10 +235,15 @@ const updateCompromisso = async (req, res) => {
 
 const patchCompromisso = async (req, res) => {
   const id = req.query.id;
-  const { ids_pets, nome, descricao, data, tipo_compromisso } = req.body;
+  const { ids_pets, nome, descricao, data, hora, tipo_compromisso } = req.body;
 
-  if (!ids_pets && !nome && !descricao && !data && !tipo_compromisso) {
+  if (!ids_pets && !nome && !descricao && !data & !hora && !tipo_compromisso) {
     return res.status(400).json({ message: "Pelo menos um campo deve ser fornecido para atualizar compromisso." });
+  }
+
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
   }
 
   try {
@@ -234,15 +266,28 @@ const patchCompromisso = async (req, res) => {
       values.push(descricao);
       placeholderCount++;
     }
-    if (data) {
-      updates.push(`data = $${placeholderCount}`);
-      values.push(data);
-      placeholderCount++;
-    }
     if(tipo_compromisso){
       updates.push(`tipo_compromisso = $${placeholderCount}`);
       values.push(tipo_compromisso);
       placeholderCount++;
+    }
+
+    if(data && hora){
+      const combinedDatetime = combineDateAndTime(data, hora);
+      updates.push(`data = $${placeholderCount}`);
+      values.push(combinedDatetime);
+      placeholderCount++;
+    } else {
+      if (data) {
+        updates.push(`data = $${placeholderCount}`);
+        values.push(data);
+        placeholderCount++;
+      }
+      if(hora){
+        updates.push(`data = $${placeholderCount}`);
+        values.push(data);
+        placeholderCount++;
+      }
     }
 
     values.push(id);

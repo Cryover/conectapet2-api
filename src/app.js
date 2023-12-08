@@ -3,6 +3,7 @@ const app = express();
 const dotenv = require("dotenv");
 const requireAuth = require("./utils/jwtAuth");
 const swaggerOptions = require("../swaggerhub-spec.json");
+const winston = require('winston');
 
 const options = {
   definition: swaggerOptions,
@@ -11,6 +12,12 @@ const options = {
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
+
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()],
+});
 
 const connectDatabase = require("./dataBase");
 const rotasLogin = require("./routes/rotasLogin");
@@ -46,6 +53,14 @@ app.all("*", (req, res) => {
   return res.status(404).json({
     message: "ERRO 404 - Rota não encontrada ou inexistente",
   });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  // Log or handle the error as needed
+  logger.error('Uncaught Exception:', err);
+  // Optionally, you might want to gracefully shut down the application
+  process.exit(1);
 });
 
 app.listen(PORT, () => {

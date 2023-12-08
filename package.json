@@ -4,9 +4,9 @@
   "description": "Api para o app conectapet2",
   "main": "app.js",
   "scripts": {
-    "start": "pm2 start src/app.js --watch --name conectapet",
+    "start": "src/app.js",
     "dev": "nodemon src/app.js",
-    "build": "npm install && pm2 start src/app.js --watch --name conectapet",
+    "build": "src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-buid": ""
   },
@@ -22,7 +22,8 @@
     "pm2": "^5.3.0",
     "sequelize": "^6.35.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.4.11",

@@ -35,7 +35,7 @@ const getAllDespesaByIdOwner = async (req, res) => {
 
   try {
     const { rows } = await req.dbClient.query(
-      "SELECT * FROM despesas WHERE id_dono = $1",
+      "SELECT * FROM despesa WHERE id_dono = $1",
       [id_dono]
     );
     if (rows.length === 0) {
@@ -48,13 +48,13 @@ const getAllDespesaByIdOwner = async (req, res) => {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Erro ao buscar despesas por id_dono." });
+      .json({ message: "Erro ao buscar despesa por id_dono." });
   }
 };
 
 const getAllDespesaByDay = async (req, res) => {
   const id_dono = req.params.id;
-  const day = req.query.day;
+  const day = req.params.day;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_pet é obrigatório." });
@@ -79,13 +79,13 @@ const getAllDespesaByDay = async (req, res) => {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Erro ao buscar despesas por id_dono." });
+      .json({ message: "Erro ao buscar despesa por id_dono." });
   }
 };
 
 const getAllDespesaByMonth = async (req, res) => {
   const id_dono = req.params.id;
-  const month = req.query.month;
+  const month = req.params.month;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_pet é obrigatório." });
@@ -103,20 +103,21 @@ const getAllDespesaByMonth = async (req, res) => {
     if (rows.length === 0) {
       return res
         .status(404)
-        .json({ message: `Nenhuma despesa encontrada no mês de ${month}.` });
+        .json({ message: `Nenhuma despesa encontrada no mês ${month}.` });
     }
+    console.log(rows[0]);
     return res.status(200).json(rows[0]);
   } catch (error) {
-    console.error(error);
+    console.log(error);
     return res
       .status(500)
-      .json({ message: "Erro ao buscar despesas por id_dono." });
+      .json({ message: "Erro ao buscar despesa por id_dono." });
   }
 };
 
 const getAllDespesaByYear = async (req, res) => {
   const id_dono = req.params.id;
-  const year = req.query.year;
+  const year = req.params.year;
 
   if (!id_dono) {
     return res.status(400).json({ message: "Id_pet é obrigatório." });
@@ -141,16 +142,17 @@ const getAllDespesaByYear = async (req, res) => {
     console.error(error);
     return res
       .status(500)
-      .json({ message: "Erro ao buscar despesas por id_dono." });
+      .json({ message: "Erro ao buscar despesa por id_dono." });
   }
 };
 
 const createDespesa = async (req, res) => {
   const id_dono = req.query.donoId;
   const id_pet = req.query.petId;
-  const { nome, descricao, data, observacao } = req.body;
+  const { nome, valor, data, hora, observacao } = req.body;
   const requiredFields = ['nome', 'valor', 'data', 'observacao'];
   const currentDateTime = new Date().toISOString();
+  let newData;
 
   if (!id_dono) {
     return res.status(400).json({ message: `Id de dono é obrigatório.` });
@@ -167,17 +169,34 @@ const createDespesa = async (req, res) => {
     }
   }
 
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
+  }
+
+  if(data && hora) {
+    newData = combineDateAndTime(data, hora);
+    console.log(newData)
+  } else {
+    if(data){
+      newData = data;
+    }
+    if(hora){
+      newData = hora;
+    }
+  }
+
   try {
-    const { rows } = await req.dbClient.query(
-      "INSERT INTO compromisso (id, id_nome, id_pet, nome, descricao, data, observacao, criado_em) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+    await req.dbClient.query(
+      "INSERT INTO despesa (id, id_dono, id_pet, nome, valor, observacao, data, criado_em) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
       [
         crypto.randomUUID(),
         id_dono,
         id_pet,
         nome,
-        descricao,
-        data,
+        valor,
         observacao,
+        newData,
         currentDateTime
       ]
     );
@@ -189,15 +208,25 @@ const createDespesa = async (req, res) => {
 
 const updateDespesa = async (req, res) => {
   const id = req.query.id;
-  const { id_pet, nome, descricao, data, observacao } = req.body;
+  const { id_pet, nome, data, hora, observacao } = req.body;
+  const requiredFields = ['id_pet', 'nome', 'data', 'hora', 'observacao'];
 
-  if (id_pet || !nome || !descricao || !data || !observacao) {
-    return res.status(400).json({ message: "Todos campos devem ser fornecidos para atualização de despesa." });
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      console.error(`${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.`)
+      return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} é obrigatório.` });
+    }
+  }
+
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
   }
 
   try {
-    const updateQuery = `UPDATE despesa SET id_pet = $1, nome = $2, descricao = $3, data = $4, observacao = $5 WHERE id = $6`;
-    const queryValues = [id_pet, nome, descricao, data, observacao, id];
+    const combinedDatetime = combineDateAndTime(data, hora);
+    const updateQuery = `UPDATE despesa SET id_pet = $1, nome = $2, data = $3, observacao = $4 WHERE id = $5`;
+    const queryValues = [id_pet, nome, combinedDatetime, observacao, id];
 
     await req.dbClient.query(updateQuery, queryValues);
     return res.status(200).json({ message: "Despesa atualizado com sucesso." });
@@ -208,11 +237,15 @@ const updateDespesa = async (req, res) => {
 
 const patchDespesa = async (req, res) => {
   const id_dono = req.query.id;
-  const { id_pet, nome, descricao, data, observacao } = req.body;
-  let hashedPassword;
+  const { id_pet, nome, data, hora, observacao } = req.body;
 
-  if (id_pet && !nome && !descricao && !data && !observacao) {
+  if (id_pet && !nome && !data & !hora && !observacao) {
     return res.status(400).json({ message: "Pelo menos um campo deve ser fornecido para atualização de despesa." });
+  }
+
+  const combineDateAndTime = (dateStr, timeStr) => {
+    const combinedStr = `${dateStr}T${timeStr}`;
+    return new Date(combinedStr);
   }
 
   try {
@@ -220,13 +253,8 @@ const patchDespesa = async (req, res) => {
     const values = [];
     let placeholderCount = 1;
 
-    if (username) {
-      updates.push(`username = $${placeholderCount}`);
-      values.push(username);
-      placeholderCount++;
-    }
-    if (email) {
-      updates.push(`email = $${placeholderCount}`);
+    if (id_pet) {
+      updates.push(`id_pet = $${placeholderCount}`);
       values.push(email);
       placeholderCount++;
     }
@@ -235,16 +263,27 @@ const patchDespesa = async (req, res) => {
       values.push(nome);
       placeholderCount++;
     }
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-      updates.push(`password = $${placeholderCount}`);
-      values.push(hashedPassword);
+
+    if (observacao) {
+      updates.push(`observacao = $${placeholderCount}`);
+      values.push(observacao);
       placeholderCount++;
     }
-    if (id === process.env.ID_ADMIN) {
-      if (tipo_usuario) {
-        updates.push(`tipo_usuario = $${placeholderCount}`);
-        values.push(tipo_usuario);
+
+    if(data && hora){
+      const combinedDatetime = combineDateAndTime(data, hora);
+      updates.push(`data = $${placeholderCount}`);
+      values.push(combinedDatetime);
+      placeholderCount++;
+    } else {
+      if (data) {
+        updates.push(`data = $${placeholderCount}`);
+        values.push(data);
+        placeholderCount++;
+      }
+      if(hora){
+        updates.push(`data = date_trunc('day', ${hora}) + $${placeholderCount}::time`);
+        values.push(hora);
         placeholderCount++;
       }
     }
@@ -254,9 +293,9 @@ const patchDespesa = async (req, res) => {
     const updateQuery = `UPDATE despesa SET ${updates.join(', ')} WHERE id = $${placeholderCount}`;
 
     await req.dbClient.query(updateQuery, values);
-    return res.status(200).json({ message: "Usuario atualizado com sucesso." });
+    return res.status(200).json({ message: "Despesa atualizada com sucesso." });
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao atualizar o usuario." });
+    return res.status(500).json({ message: "Erro ao atualizar o despesa." });
   }
 };
 
@@ -268,9 +307,9 @@ const deleteDespesa = async (req, res) => {
       "DELETE FROM despesa WHERE id = $1",
       [id]
     );
-    return res.status(200).json({ message: "Usuario excluído com sucesso." });
+    return res.status(200).json({ message: "Despesa excluído com sucesso." });
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao excluir o usuario." });
+    return res.status(500).json({ message: "Erro ao excluir o Despesa." });
   }
 };
 
