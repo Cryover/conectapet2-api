@@ -7,7 +7,12 @@ if (!process.env.DATABASE_PROD_URL) {
 
 const pool = new pg.Pool({
   connectionString: process.env.DATABASE_PROD_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  retry: {
+    max: 3,
+  },
+  idleTimeoutMillis: 30000, 
+  connectionTimeoutMillis: 2000, 
 });
 
 function connectDatabase(req, res, next) {
@@ -17,6 +22,11 @@ function connectDatabase(req, res, next) {
         //console.log('URL', process.env.DATABASE_PROD_URL);
         console.error("Error acquiring client from pool", err);
         console.log("Error acquiring client from pool", err);
+        
+        pool.on('error', (err, client) => {
+          console.error('Unexpected error on idle client', err);
+          process.exit(-1);
+        });
         
         done(client);
 
@@ -31,6 +41,7 @@ function connectDatabase(req, res, next) {
 
           setTimeout(attemptConnection, 5000);
         });
+        
 
         req.dbClient = client;
         req.dbDone = done;

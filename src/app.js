@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const app = express();
 const dotenv = require("dotenv");
 const requireAuth = require("./utils/jwtAuth");
@@ -26,6 +27,7 @@ const rotasUsuarios = require("./routes/rotasUsuarios");
 const rotasCompromisso = require("./routes/rotasCompromisso");
 const rotasDespesa = require("./routes/rotasDespesa");
 
+app.use(cors());
 app.use(connectDatabase);
 app.use(express.json());
 

@@ -109,9 +109,15 @@ const getAllDespesaByMonth = async (req, res) => {
     return res.status(200).json(rows[0]);
   } catch (error) {
     console.log(error);
-    return res
+    if(error.status === 502){
+      return res
+      .status(502)
+      .json({ message: "Falha na requisição." });
+    } else {
+      return res
       .status(500)
       .json({ message: "Erro ao buscar despesa por id_dono." });
+    }
   }
 };
 
