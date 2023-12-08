@@ -16,6 +16,12 @@ const pool = new pg.Pool({
 });
 
 function connectDatabase(req, res, next) {
+
+  function logActiveConnections() {
+    const activeConnections = pool.totalCount;
+    console.log(`Active connections: ${activeConnections}`);
+  }
+
   function attemptConnection() {
     pool.connect((err, client, done) => {
       if (err) {
@@ -40,6 +46,7 @@ function connectDatabase(req, res, next) {
 
         req.dbClient = client;
         req.dbDone = done;
+        logActiveConnections();
         next();
       }
     });

@@ -32,35 +32,10 @@ app.use(connectDatabase);
 app.use(express.json());
 
 app.use("/api/v1/login", rotasLogin);
-app.use((req, res, next) => {
-  const activeConnections = pool.totalCount;
-  console.log(`Active connections: ${activeConnections}`);
-  next();
-});
 app.use("/api/v1/usuarios", requireAuth, rotasUsuarios);
-app.use((req, res, next) => {
-  const activeConnections = pool.totalCount;
-  console.log(`Active connections: ${activeConnections}`);
-  next();
-});
 app.use("/api/v1/pets", requireAuth, rotasPets);
-app.use((req, res, next) => {
-  const activeConnections = pool.totalCount;
-  console.log(`Active connections: ${activeConnections}`);
-  next();
-});
 app.use("/api/v1/compromisso", requireAuth, rotasCompromisso);
-app.use((req, res, next) => {
-  const activeConnections = pool.totalCount;
-  console.log(`Active connections: ${activeConnections}`);
-  next();
-});
 app.use("/api/v1/despesa", requireAuth, rotasDespesa);
-app.use((req, res, next) => {
-  const activeConnections = pool.totalCount;
-  console.log(`Active connections: ${activeConnections}`);
-  next();
-});
 
 // Set up Swagger documentation
 const swaggerJsdoc = require("swagger-jsdoc");
