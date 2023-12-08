@@ -23,6 +23,8 @@ const getAllDespesaByIdPet = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar o Histórico despesa por id_pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -49,6 +51,8 @@ const getAllDespesaByIdOwner = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar despesa por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -80,6 +84,8 @@ const getAllDespesaByDay = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar despesa por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -118,6 +124,8 @@ const getAllDespesaByMonth = async (req, res) => {
       .status(500)
       .json({ message: "Erro ao buscar despesa por id_dono." });
     }
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -149,6 +157,8 @@ const getAllDespesaByYear = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar despesa por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -208,6 +218,8 @@ const createDespesa = async (req, res) => {
     return res.status(201).json({ message: "Despesa criada com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao criar Despesa." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -237,6 +249,8 @@ const updateDespesa = async (req, res) => {
     return res.status(200).json({ message: "Despesa atualizado com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar despesa." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -301,6 +315,8 @@ const patchDespesa = async (req, res) => {
     return res.status(200).json({ message: "Despesa atualizada com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar o despesa." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -315,6 +331,8 @@ const deleteDespesa = async (req, res) => {
     return res.status(200).json({ message: "Despesa excluído com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao excluir o Despesa." });
+  } finally {
+    req.dbDone();
   }
 };
 

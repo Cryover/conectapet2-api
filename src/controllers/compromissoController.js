@@ -23,6 +23,8 @@ const getAllCompromissoByIdPet = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar o Histórico veterinário por id_pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -49,6 +51,8 @@ const getAllCompromissoByIdOwner = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar compromissos por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -77,9 +81,11 @@ const getAllCompromissoByDay = async (req, res) => {
     return res.status(200).json(rows[0]);
   } catch (error) {
     console.error(error);
-    return res
+    res
       .status(500)
       .json({ message: "Erro ao buscar compromissos por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -108,9 +114,11 @@ const getAllCompromissoByMonth = async (req, res) => {
     return res.status(200).json(rows[0]);
   } catch (error) {
     console.error(error);
-    return res
+    res
       .status(500)
       .json({ message: "Erro ao buscar compromissos por Mês." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -142,6 +150,8 @@ const getAllCompromissoByYear = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erro ao buscar compromissos por id_dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -197,6 +207,8 @@ const createCompromisso = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao criar Compromisso." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -230,6 +242,8 @@ const updateCompromisso = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar o usuario." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -302,6 +316,8 @@ const patchCompromisso = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar compromisso." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -317,6 +333,8 @@ const deleteCompromisso = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao excluir Compromisso." });
+  } finally {
+    req.dbDone();
   }
 };
 

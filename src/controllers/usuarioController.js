@@ -10,7 +10,7 @@ const getAllUsuarios = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Erro ao buscar Usuarios." });
   } finally {
-    //req.dbDone();
+    req.dbDone();
   }
 };
 
@@ -31,6 +31,8 @@ const getUsuarioById = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao buscar o Usuario por ID." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -77,6 +79,8 @@ const createUsuario = async (req, res) => {
   } catch (e) {
     console.error(e);
     return res.status(500).json({ message: "Erro ao criar um usuario." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -115,6 +119,8 @@ const updateUsuario = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar o usuario." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -173,6 +179,8 @@ const patchUsuario = async (req, res) => {
     return res.status(200).json({ message: "Usuario atualizado com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar o usuario." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -187,7 +195,9 @@ const deleteUsuario = async (req, res) => {
     return res.status(200).json({ message: "Usuario excluído com sucesso." });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Erro ao excluir o usuario." });
+    return res.send.status(500).json({ message: "Erro ao excluir o usuario." });
+  } finally {
+    req.dbDone();
   }
 };
 

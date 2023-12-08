@@ -49,13 +49,15 @@ const login = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro 500 - Erro interno do servidor" });
+  } finally {
+    req.dbDone();
   }
 };
 
 const verifyToken = (req, res) => {
   let token = req.headers.authorization;
   console.log('Verificando Token', token)
-
+  
   if (!token) {
     //console.log('token undefined')
     return res.status(401).json({ message: 'Erro 401 - Token nao informado' });
@@ -64,19 +66,26 @@ const verifyToken = (req, res) => {
     //console.log('new token', token)
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Erro 401 - Token expirado' });
-      } else if (err.name === 'JsonWebTokenError') {
-        return res.status(401).json({ message: 'Erro 401 - Token invalido' });
-      } else {
-        return res.status(401).json({ message: 'Erro 401 - Verificacao de token falhou' });
+  try {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        if (err.name === 'TokenExpiredError') {
+          return res.status(401).json({ message: 'Erro 401 - Token expirado' });
+        } else if (err.name === 'JsonWebTokenError') {
+          return res.status(401).json({ message: 'Erro 401 - Token invalido' });
+        } else {
+          return res.status(401).json({ message: 'Erro 401 - Verificacao de token falhou' });
+        }
       }
-    }
-    console.log('Token Validado');
-    return res.status(200).json({ message: 'Status 200 - Token Validado!' });
-  });
+      console.log('Token Validado');
+      return res.status(200).json({ message: 'Status 200 - Token Validado!' });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Erro ao verificar Token" });
+  } finally {
+    req.dbDone();
+  }
 };
 
 module.exports = {

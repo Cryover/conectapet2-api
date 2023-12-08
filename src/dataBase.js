@@ -12,7 +12,7 @@ const pool = new pg.Pool({
     max: 3,
   },
   idleTimeoutMillis: 30000, 
-  connectionTimeoutMillis: 2000, 
+  connectionTimeoutMillis: 5000, 
 });
 
 function connectDatabase(req, res, next) {
@@ -22,11 +22,6 @@ function connectDatabase(req, res, next) {
         //console.log('URL', process.env.DATABASE_PROD_URL);
         console.error("Error acquiring client from pool", err);
         console.log("Error acquiring client from pool", err);
-        
-        pool.on('error', (err, client) => {
-          console.error('Unexpected error on idle client', err);
-          process.exit(-1);
-        });
         
         done(client);
 

@@ -62,7 +62,6 @@ process.on('uncaughtException', (err) => {
   // Log or handle the error as needed
   logger.error('Uncaught Exception:', err);
   // Optionally, you might want to gracefully shut down the application
-  process.exit(1);
 });
 
 app.listen(PORT, () => {

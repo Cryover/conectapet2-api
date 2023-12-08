@@ -13,6 +13,8 @@ const getAllPetsByOwner = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao buscar pets por dono." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -31,6 +33,8 @@ const getPetById = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao buscar o Pet por ID." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -80,6 +84,8 @@ const createPet = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "ERRO 500 - Erro ao adicionar pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -103,6 +109,8 @@ const updatePet = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao atualizar Pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -158,6 +166,8 @@ const patchPet = async (req, res) => {
     return res.status(200).json({ message: "Pet atualizado com sucesso." });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao atualizar Pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
@@ -170,6 +180,8 @@ const deletePet = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Erro ao excluir o pet." });
+  } finally {
+    req.dbDone();
   }
 };
 
